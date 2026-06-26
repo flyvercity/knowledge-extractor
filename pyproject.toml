@@ -11,6 +11,7 @@ dependencies = [
     "openpyxl",
     "pymupdf",
     "Pillow",
+    "python-dotenv",
 ]
 
 [project.scripts]

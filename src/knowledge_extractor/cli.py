@@ -1,6 +1,9 @@
 import argparse
 import time
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
 
 from .logging_setup import setup_logging
 from .discovery import discover_files
