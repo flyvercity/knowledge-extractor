@@ -17,7 +17,7 @@ def main():
     parser.add_argument("--input", required=True, type=Path, help="Input directory")
     parser.add_argument("--output", type=Path, default=Path("./output"), help="Output directory")
     parser.add_argument("--temp", type=Path, default=Path("./temp"), help="Intermediate data directory")
-    parser.add_argument("--model", default="google/gemini-2.5-flash", help="OpenRouter model")
+    parser.add_argument("--model", default="xiaomi/mimo-v2.5", help="OpenRouter model")
     args = parser.parse_args()
 
     args.output.mkdir(parents=True, exist_ok=True)
