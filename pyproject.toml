@@ -1,7 +1,17 @@
 [project]
 name = "knowledge-extractor"
 version = "0.1.0"
-description = "Add your description here"
+description = "Extract agent-accessible knowledge from document file trees"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "openrouter",
+    "python-docx",
+    "python-pptx",
+    "openpyxl",
+    "pymupdf",
+    "Pillow",
+]
+
+[project.scripts]
+knowledge-extractor = "knowledge_extractor.cli:main"
