@@ -55,8 +55,11 @@ def _clear(args):
         print("Cancelled.")
         return
     for p, _ in existing:
-        shutil.rmtree(p)
-        print(f"  Removed {p}")
+        shutil.rmtree(p, ignore_errors=True)
+        if p.exists():
+            print(f"  Partially removed {p} (some files locked)")
+        else:
+            print(f"  Removed {p}")
 
 
 def _run(args):

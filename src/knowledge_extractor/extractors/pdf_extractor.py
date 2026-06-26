@@ -1,12 +1,11 @@
 from pathlib import Path
 import pymupdf
+from .utils import get_img_dir
 
 
 def extract_pdf(file_path: Path, temp_dir: Path) -> str:
     doc = pymupdf.open(str(file_path))
-    stem = file_path.stem
-    img_dir = temp_dir / stem
-    img_dir.mkdir(parents=True, exist_ok=True)
+    img_dir = get_img_dir(temp_dir, file_path)
 
     lines = []
     img_count = 0
@@ -21,7 +20,7 @@ def extract_pdf(file_path: Path, temp_dir: Path) -> str:
             pix = page.get_pixmap(dpi=150)
             img_path = img_dir / f"page{page_num}.png"
             pix.save(str(img_path))
-            lines.append(f"\n![image]({img_path})\n")
+            lines.append(f"\n![image]({img_path.resolve()})\n")
             img_count += 1
             continue
 
@@ -32,7 +31,7 @@ def extract_pdf(file_path: Path, temp_dir: Path) -> str:
             ext = base_image["ext"]
             img_path = img_dir / f"page{page_num}_img{img_count}.{ext}"
             img_path.write_bytes(base_image["image"])
-            lines.append(f"\n![image]({img_path})\n")
+            lines.append(f"\n![image]({img_path.resolve()})\n")
             img_count += 1
 
     doc.close()

@@ -1,13 +1,12 @@
 from pathlib import Path
 from docx import Document
 from docx.table import Table
+from .utils import get_img_dir
 
 
 def extract_docx(file_path: Path, temp_dir: Path) -> str:
     doc = Document(str(file_path))
-    stem = file_path.stem
-    img_dir = temp_dir / stem
-    img_dir.mkdir(parents=True, exist_ok=True)
+    img_dir = get_img_dir(temp_dir, file_path)
 
     # Extract images
     img_paths = []
@@ -36,7 +35,7 @@ def extract_docx(file_path: Path, temp_dir: Path) -> str:
             if para._element.findall(".//{http://schemas.openxmlformats.org/wordprocessingml/2006/main}drawing") or \
                para._element.findall(".//{http://schemas.openxmlformats.org/wordprocessingml/2006/main}pict"):
                 if img_idx < len(img_paths):
-                    lines.append(f"\n![image]({img_paths[img_idx]})\n")
+                    lines.append(f"\n![image]({img_paths[img_idx].resolve()})\n")
                     img_idx += 1
 
             text = para.text.strip()
@@ -61,7 +60,7 @@ def extract_docx(file_path: Path, temp_dir: Path) -> str:
 
     # Append any remaining images not matched inline
     while img_idx < len(img_paths):
-        lines.append(f"\n![image]({img_paths[img_idx]})\n")
+        lines.append(f"\n![image]({img_paths[img_idx].resolve()})\n")
         img_idx += 1
 
     return "\n".join(lines)

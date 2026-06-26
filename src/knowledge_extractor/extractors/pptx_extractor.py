@@ -2,13 +2,12 @@ from pathlib import Path
 from pptx import Presentation
 from pptx.shapes.picture import Picture
 from pptx.shapes.group import GroupShape
+from .utils import get_img_dir
 
 
 def extract_pptx(file_path: Path, temp_dir: Path) -> str:
     prs = Presentation(str(file_path))
-    stem = file_path.stem
-    img_dir = temp_dir / stem
-    img_dir.mkdir(parents=True, exist_ok=True)
+    img_dir = get_img_dir(temp_dir, file_path)
 
     lines = []
     img_count = 0
@@ -21,7 +20,7 @@ def extract_pptx(file_path: Path, temp_dir: Path) -> str:
                     ext = _img_ext(shape.image.content_type)
                     img_path = img_dir / f"slide{slide_num}_img{img_count}{ext}"
                     img_path.write_bytes(shape.image.blob)
-                    lines.append(f"\n![image]({img_path})\n")
+                    lines.append(f"\n![image]({img_path.resolve()})\n")
                     img_count += 1
                 except (ValueError, AttributeError):
                     pass
