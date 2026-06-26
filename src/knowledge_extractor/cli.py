@@ -1,4 +1,5 @@
 import argparse
+import shutil
 import time
 from pathlib import Path
 from dotenv import load_dotenv
@@ -14,12 +15,51 @@ from .index import generate_index
 
 def main():
     parser = argparse.ArgumentParser(description="Extract knowledge from document file trees")
-    parser.add_argument("--input", required=True, type=Path, help="Input directory")
+    sub = parser.add_subparsers(dest="command")
+
+    # Default run command (no subcommand needed)
+    parser.add_argument("--input", type=Path, help="Input directory")
     parser.add_argument("--output", type=Path, default=Path("./output"), help="Output directory")
     parser.add_argument("--temp", type=Path, default=Path("./temp"), help="Intermediate data directory")
     parser.add_argument("--model", default="xiaomi/mimo-v2.5", help="OpenRouter model")
+
+    # Clear subcommand
+    clear_parser = sub.add_parser("clear", help="Remove output and temp directories")
+    clear_parser.add_argument("--output", type=Path, default=Path("./output"), help="Output directory")
+    clear_parser.add_argument("--temp", type=Path, default=Path("./temp"), help="Intermediate data directory")
+
     args = parser.parse_args()
 
+    if args.command == "clear":
+        _clear(args)
+        return
+
+    if not args.input:
+        parser.error("--input is required")
+
+    _run(args)
+
+
+def _clear(args):
+    dirs = [(args.temp, "temp"), (args.output, "output")]
+    existing = [(p, name) for p, name in dirs if p.exists()]
+    if not existing:
+        print("Nothing to clear.")
+        return
+
+    print("This will remove:")
+    for p, name in existing:
+        print(f"  {p.resolve()}")
+    answer = input("Proceed? [y/N] ").strip().lower()
+    if answer != "y":
+        print("Cancelled.")
+        return
+    for p, _ in existing:
+        shutil.rmtree(p)
+        print(f"  Removed {p}")
+
+
+def _run(args):
     args.output.mkdir(parents=True, exist_ok=True)
     args.temp.mkdir(parents=True, exist_ok=True)
 
