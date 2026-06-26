@@ -4,13 +4,13 @@ import time
 from pathlib import Path
 from dotenv import load_dotenv
 
-load_dotenv()
-
 from .logging_setup import setup_logging
 from .discovery import discover_files
 from .tracker import ProgressTracker
 from .pipeline import process_file
 from .index import generate_index
+
+load_dotenv()
 
 
 def main():
@@ -21,7 +21,7 @@ def main():
     parser.add_argument("--input", type=Path, help="Input directory")
     parser.add_argument("--output", type=Path, default=Path("./output"), help="Output directory")
     parser.add_argument("--temp", type=Path, default=Path("./temp"), help="Intermediate data directory")
-    parser.add_argument("--model", default="xiaomi/mimo-v2.5", help="OpenRouter model")
+    parser.add_argument("--model", default="google/gemini-3.1-flash-lite", help="OpenRouter model")
 
     # Clear subcommand
     clear_parser = sub.add_parser("clear", help="Remove output and temp directories")
@@ -64,7 +64,7 @@ def _run(args):
     args.temp.mkdir(parents=True, exist_ok=True)
 
     log = setup_logging(args.output)
-    log.info(f"Knowledge Extractor starting")
+    log.info("Knowledge Extractor starting")
     log.info(f"Input: {args.input.resolve()}")
     log.info(f"Output: {args.output.resolve()}")
     log.info(f"Temp: {args.temp.resolve()}")

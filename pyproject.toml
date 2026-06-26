@@ -16,3 +16,6 @@ dependencies = [
 
 [project.scripts]
 knowledge-extractor = "knowledge_extractor.cli:main"
+
+[tool.uv]
+package = true

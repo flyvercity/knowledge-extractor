@@ -37,26 +37,34 @@ def process_file(file: DiscoveredFile, args, tracker: ProgressTracker, logger: l
     start = time.time()
 
     # 1. Extract
+    t0 = time.time()
     extractor = EXTRACTORS[file.format_type]
     intermediate_md = extractor(file.path, args.temp)
+    log.info(f"  Extract: {time.time() - t0:.2f}s ({len(intermediate_md)} chars)")
 
     # Save intermediate
     inter_path = args.temp / file.relative_path.with_suffix(".md")
     inter_path.parent.mkdir(parents=True, exist_ok=True)
     inter_path.write_text(intermediate_md, encoding="utf-8")
-    log.debug(f"Intermediate saved: {inter_path}")
 
     # 2. Heuristic filter
+    t0 = time.time()
     filtered_md = filter_content(intermediate_md, file.format_type)
+    log.info(f"  Filter: {time.time() - t0:.2f}s ({len(intermediate_md) - len(filtered_md):+d} chars)")
 
     # 3. AI image analysis — replace image refs with text
+    t0 = time.time()
     ai = _get_ai(args.model)
+    img_count = len(re.findall(r"!\[image\]\(.+?\)", filtered_md))
     final_md = _replace_images_with_ai(filtered_md, ai)
+    log.info(f"  AI images: {time.time() - t0:.2f}s ({img_count} images)")
 
     # 4. AI cleanup
+    t0 = time.time()
     cleaned = ai.cleanup_content(final_md)
     if cleaned:
         final_md = cleaned
+    log.info(f"  AI cleanup: {time.time() - t0:.2f}s")
 
     # 5. Write final output
     out_path = args.output / file.relative_path.with_suffix(".md")
@@ -66,7 +74,7 @@ def process_file(file: DiscoveredFile, args, tracker: ProgressTracker, logger: l
     # 6. Track
     tracker.mark_processed(file, out_path)
     elapsed = time.time() - start
-    log.info(f"  Done in {elapsed:.1f}s (AI calls: {ai.calls})")
+    log.info(f"  Total: {elapsed:.1f}s")
 
 
 def _replace_images_with_ai(markdown: str, ai: AIClient) -> str:
