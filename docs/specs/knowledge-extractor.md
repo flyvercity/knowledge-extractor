@@ -79,6 +79,18 @@ src/knowledge_extractor/
 - **Model**: `--model` CLI flag, default `google/gemini-2.5-flash`
 - **Directories**: `--input` (required), `--output` (default `./output`), `--temp` (default `./temp`)
 
+## Logging
+
+Extensive processing logging to both console and a log file:
+
+- **Console**: Real-time progress with file being processed, step being executed, warnings, errors
+- **Log file**: Written to `{output}/extraction.log`, includes timestamps, log levels, full details
+- **Log levels**: DEBUG (extraction details, API payloads), INFO (file progress, step transitions), WARNING (skipped content, heuristic decisions), ERROR (failures with tracebacks)
+- **Per-file logging**: Log entry when starting/completing each file, including time taken
+- **AI interaction logging**: Log prompts sent and response summaries (not full responses to avoid bloat)
+- **Summary stats**: At end of run, log total files processed/skipped/failed, total time, total API calls made
+- Uses Python `logging` module with dual handlers (StreamHandler for console, FileHandler for log file)
+
 ## Task Breakdown
 
 ### Task 1: Project scaffolding and CLI skeleton
