@@ -101,6 +101,7 @@ name = "knowledge-extractor"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "lxml" },
     { name = "openpyxl" },
     { name = "openrouter" },
     { name = "pillow" },
@@ -112,6 +113,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "lxml" },
     { name = "openpyxl" },
     { name = "openrouter" },
     { name = "pillow" },

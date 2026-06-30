@@ -17,6 +17,37 @@ IMAGE_PROMPT = """Analyze this image from a technical document.
 Context from surrounding document:
 {context}"""
 
+FORMULA_IMAGE_PROMPT = """Convert this mathematical formula image to LaTeX notation.
+
+Rules:
+- Output ONLY the LaTeX expression, nothing else
+- Do NOT include $ delimiters or \\begin{{equation}} wrappers
+- Use standard LaTeX math commands (\\int, \\sum, \\frac, \\sqrt, etc.)
+- For matrices use \\begin{{pmatrix}} or \\begin{{bmatrix}} as appropriate
+- For Greek letters use standard commands (\\alpha, \\beta, \\gamma, etc.)
+- Preserve subscripts and superscripts accurately
+- If the image is unclear or not a formula, respond with "UNCLEAR"
+
+Context from surrounding document:
+{context}"""
+
+FORMULA_OMML_PROMPT = """Convert this Office Math ML (OMML) XML to LaTeX notation.
+
+Rules:
+- Output ONLY the LaTeX expression, nothing else
+- Do NOT include $ delimiters or \\begin{{equation}} wrappers
+- Use standard LaTeX math commands (\\int, \\sum, \\frac, \\sqrt, etc.)
+- For matrices use \\begin{{pmatrix}} or \\begin{{bmatrix}} as appropriate
+- For Greek letters use standard commands (\\alpha, \\beta, \\gamma, etc.)
+- Preserve subscripts and superscripts accurately
+- If the XML is malformed or not a formula, respond with "UNCLEAR"
+
+OMML XML:
+{omml_xml}
+
+Context from surrounding document:
+{context}"""
+
 CLEANUP_PROMPT = """Clean up this markdown extracted from a technical document.
 - Remove non-essential content (redundant headers, boilerplate disclaimers, page numbers)
 - Preserve ALL technical information, data, and diagrams
@@ -56,6 +87,61 @@ class AIClient:
         if response and response.strip().upper() == "DECORATIVE":
             log.debug(f"AI: image {image_path.name} classified as decorative")
             return ""
+        return response
+
+    def convert_formula_to_latex(
+        self, *, image_path: "Path | None" = None, omml_xml: str | None = None,
+        context: str = ""
+    ) -> str | None:
+        """Convert a formula to LaTeX using AI vision.
+
+        Provide either image_path (for PDF formula regions) or omml_xml
+        (for DOCX/PPTX OMML elements). Returns the LaTeX string or None.
+        """
+        if not self.client:
+            return None
+
+        if image_path is not None:
+            # Image-based conversion (PDF formulas)
+            data = base64.b64encode(image_path.read_bytes()).decode()
+            ext = image_path.suffix.lower().lstrip(".")
+            mime = {"jpg": "image/jpeg", "jpeg": "image/jpeg", "png": "image/png",
+                    "gif": "image/gif"}.get(ext, "image/png")
+
+            prompt = FORMULA_IMAGE_PROMPT.format(context=context[:300] if context else "")
+            response = self._call([
+                {"role": "user", "content": [
+                    {"type": "text", "text": prompt},
+                    {"type": "image_url", "image_url": {"url": f"data:{mime};base64,{data}"}},
+                ]}
+            ])
+        elif omml_xml is not None:
+            # Text-based conversion (DOCX/PPTX OMML)
+            prompt = FORMULA_OMML_PROMPT.format(
+                omml_xml=omml_xml[:3000],
+                context=context[:300] if context else "",
+            )
+            response = self._call([
+                {"role": "user", "content": prompt}
+            ])
+        else:
+            log.warning("convert_formula_to_latex called without image or OMML")
+            return None
+
+        if response and response.strip().upper() == "UNCLEAR":
+            log.debug("AI: formula classified as unclear")
+            return None
+
+        # Clean up response: strip code fences, dollar signs, whitespace
+        if response:
+            response = response.strip()
+            # Remove markdown code fences if present
+            if response.startswith("```"):
+                lines = response.split("\n")
+                response = "\n".join(lines[1:-1] if lines[-1].startswith("```") else lines[1:])
+            # Remove wrapping $ or $$
+            response = response.strip().strip("$").strip()
+
         return response
 
     def cleanup_content(self, markdown: str) -> str | None:

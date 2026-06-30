@@ -7,6 +7,7 @@ from .discovery import DiscoveredFile
 from .tracker import ProgressTracker
 from .filters import filter_content
 from .ai import AIClient
+from .formulas import ExtractionResult, FormulaRef, FormulaRegion, FORMULA_MARKER_PATTERN
 from .extractors.docx_extractor import extract_docx
 from .extractors.pptx_extractor import extract_pptx
 from .extractors.excel_extractor import extract_xlsx
@@ -22,6 +23,8 @@ EXTRACTORS = {
     "pdf": extract_pdf,
     "image": extract_image,
 }
+
+FORMULA_PLACEHOLDER = "[FORMULA: could not be converted without API key]"
 
 _ai_client: AIClient | None = None
 
@@ -39,42 +42,115 @@ def process_file(file: DiscoveredFile, args, tracker: ProgressTracker, logger: l
     # 1. Extract
     t0 = time.time()
     extractor = EXTRACTORS[file.format_type]
-    intermediate_md = extractor(file.path, args.temp)
-    log.info(f"  Extract: {time.time() - t0:.2f}s ({len(intermediate_md)} chars)")
+    result = extractor(file.path, args.temp)
+
+    # Normalize result: extractors return either str or ExtractionResult
+    if isinstance(result, str):
+        extraction = ExtractionResult(markdown=result, formulas=[])
+    else:
+        extraction = result
+
+    intermediate_md = extraction.markdown
+    log.info(f"  Extract: {time.time() - t0:.2f}s ({len(intermediate_md)} chars, {len(extraction.formulas)} formulas)")
 
     # Save intermediate
     inter_path = args.temp / file.relative_path.with_suffix(".md")
     inter_path.parent.mkdir(parents=True, exist_ok=True)
     inter_path.write_text(intermediate_md, encoding="utf-8")
 
-    # 2. Heuristic filter
+    # 2. Process formulas (convert markers to LaTeX)
+    t0 = time.time()
+    ai = _get_ai(args.model)
+    if extraction.formulas:
+        intermediate_md = _process_formulas(intermediate_md, extraction.formulas, ai)
+        log.info(f"  Formulas: {time.time() - t0:.2f}s ({len(extraction.formulas)} converted)")
+    else:
+        log.info(f"  Formulas: skipped (none detected)")
+
+    # 3. Heuristic filter
     t0 = time.time()
     filtered_md = filter_content(intermediate_md, file.format_type)
     log.info(f"  Filter: {time.time() - t0:.2f}s ({len(intermediate_md) - len(filtered_md):+d} chars)")
 
-    # 3. AI image analysis — replace image refs with text
+    # 4. AI image analysis — replace image refs with text
     t0 = time.time()
-    ai = _get_ai(args.model)
     img_count = len(re.findall(r"!\[image\]\(.+?\)", filtered_md))
     final_md = _replace_images_with_ai(filtered_md, ai)
     log.info(f"  AI images: {time.time() - t0:.2f}s ({img_count} images)")
 
-    # 4. AI cleanup
+    # 5. AI cleanup
     t0 = time.time()
     cleaned = ai.cleanup_content(final_md)
     if cleaned:
         final_md = cleaned
     log.info(f"  AI cleanup: {time.time() - t0:.2f}s")
 
-    # 5. Write final output
+    # 6. Write final output
     out_path = args.output / file.relative_path.with_suffix(".md")
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(final_md, encoding="utf-8")
 
-    # 6. Track
+    # 7. Track
     tracker.mark_processed(file, out_path)
     elapsed = time.time() - start
     log.info(f"  Total: {elapsed:.1f}s")
+
+
+def _process_formulas(
+    markdown: str, formulas: list[FormulaRef | FormulaRegion], ai: AIClient
+) -> str:
+    """Replace formula markers with LaTeX notation (or placeholder if no AI)."""
+    pattern = re.compile(FORMULA_MARKER_PATTERN)
+    matches = list(pattern.finditer(markdown))
+    if not matches:
+        return markdown
+
+    # Process in reverse order to preserve string positions
+    result = markdown
+    for match in reversed(matches):
+        idx = int(match.group(1))
+        if idx >= len(formulas):
+            log.warning(f"Formula marker index {idx} out of range (have {len(formulas)})")
+            continue
+
+        formula = formulas[idx]
+        latex = _convert_single_formula(formula, ai)
+
+        if latex:
+            # Wrap with appropriate delimiters
+            if formula.is_inline:
+                replacement = f"${latex}$"
+            else:
+                replacement = f"\n$$\n{latex}\n$$\n"
+        else:
+            replacement = FORMULA_PLACEHOLDER
+
+        result = result[:match.start()] + replacement + result[match.end():]
+
+    return result
+
+
+def _convert_single_formula(
+    formula: FormulaRef | FormulaRegion, ai: AIClient
+) -> str | None:
+    """Convert a single formula to LaTeX via AI."""
+    if isinstance(formula, FormulaRef):
+        # DOCX/PPTX: send OMML XML as text
+        return ai.convert_formula_to_latex(
+            omml_xml=formula.omml_xml,
+            context=formula.context_text,
+        )
+    elif isinstance(formula, FormulaRegion):
+        # PDF: send cropped image
+        if formula.image_path and formula.image_path.exists():
+            return ai.convert_formula_to_latex(
+                image_path=formula.image_path,
+                context=formula.context_text,
+            )
+        else:
+            log.warning(f"Formula region on page {formula.page_num} has no image")
+            return None
+    return None
 
 
 def _replace_images_with_ai(markdown: str, ai: AIClient) -> str:

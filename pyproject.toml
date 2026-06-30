@@ -12,6 +12,7 @@ dependencies = [
     "pymupdf",
     "Pillow",
     "python-dotenv",
+    "lxml",
 ]
 
 [project.scripts]

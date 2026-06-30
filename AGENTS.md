@@ -13,9 +13,15 @@ src/knowledge_extractor/
 ├── tracker.py          # JSON-based resume/progress tracking
 ├── logging_setup.py    # Dual console + file logging
 ├── filters.py          # Heuristic boilerplate removal
-├── ai.py               # OpenRouter client (vision + cleanup)
+├── ai.py               # OpenRouter client (vision + cleanup + formula conversion)
 ├── pipeline.py         # Per-file processing orchestration
 ├── index.py            # Flat index.md generation
+├── formulas/
+│   ├── __init__.py         # Shared types (FormulaRef, FormulaRegion, ExtractionResult)
+│   ├── docx_formulas.py    # OMML detection in DOCX
+│   ├── pptx_formulas.py    # OMML detection in PPTX
+│   ├── pdf_formulas.py     # Heuristic math region detection in PDF
+│   └── renderer.py         # PDF formula region → PNG cropping
 └── extractors/
     ├── docx_extractor.py
     ├── pptx_extractor.py
@@ -31,10 +37,13 @@ src/knowledge_extractor/
 - Resume via `temp/progress.json` keyed on relative path + mtime
 - AI gracefully skipped when `OPENROUTER_API_KEY` not set
 - External image relationships in docx and linked images in pptx are skipped (not embedded)
+- Formula detection: DOCX/PPTX use OMML XML parsing, PDF uses heuristic font/character analysis
+- Formula conversion always via AI vision (no offline OMML→LaTeX library)
+- Formula markers (`<<FORMULA:idx>>`) in intermediate output, replaced by LaTeX or placeholder in pipeline
 
 ## Dependencies
 
-openrouter, python-docx, python-pptx, openpyxl, pymupdf, Pillow
+openrouter, python-docx, python-pptx, openpyxl, pymupdf, Pillow, lxml
 
 ## Tested
 
