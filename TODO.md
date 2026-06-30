@@ -1,1 +1,1 @@
-- [ ] LaTeX
+- [x] LaTeX
