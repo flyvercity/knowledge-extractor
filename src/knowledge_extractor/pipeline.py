@@ -76,8 +76,10 @@ def process_file(file: DiscoveredFile, args, tracker: ProgressTracker, logger: l
     # 4. AI image analysis — replace image refs with text
     t0 = time.time()
     img_count = len(re.findall(r"!\[image\]\(.+?\)", filtered_md))
+    if img_count:
+        log.info(f"  AI images: processing {img_count} images...")
     final_md = _replace_images_with_ai(filtered_md, ai)
-    log.info(f"  AI images: {time.time() - t0:.2f}s ({img_count} images)")
+    log.info(f"  AI images: {time.time() - t0:.2f}s ({img_count} images done)")
 
     # 5. AI cleanup
     t0 = time.time()
@@ -164,8 +166,16 @@ def _replace_images_with_ai(markdown: str, ai: AIClient) -> str:
     if not matches:
         return markdown
 
+    total = len(matches)
+    t_start = time.time()
     result = markdown
-    for match in reversed(matches):  # reverse to preserve positions
+    for i, match in enumerate(reversed(matches)):  # reverse to preserve positions
+        if total > 5 and (i + 1) % max(1, total // 10) == 0:
+            elapsed = time.time() - t_start
+            rate = (i + 1) / elapsed if elapsed > 0 else 0
+            remaining = (total - i - 1) / rate if rate > 0 else 0
+            log.info(f"    AI images: {i + 1}/{total} ({elapsed:.0f}s elapsed, ~{remaining:.0f}s remaining)")
+
         img_path = Path(match.group(1))
         if not img_path.exists():
             log.warning(f"Image not found: {img_path}")

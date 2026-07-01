@@ -22,6 +22,7 @@ def extract_pdf(file_path: Path, temp_dir: Path) -> ExtractionResult:
 
     lines = []
     img_count = 0
+    seen_xrefs: set[int] = set()
 
     for page_num, page in enumerate(doc, 1):
         lines.append(f"\n## Page {page_num}\n")
@@ -42,10 +43,16 @@ def extract_pdf(file_path: Path, temp_dir: Path) -> ExtractionResult:
 
         lines.append(text)
 
-        # Extract embedded images
+        # Extract embedded images (deduplicate by xref, skip tiny images)
         for img_info in page.get_images(full=True):
             xref = img_info[0]
+            if xref in seen_xrefs:
+                continue
+            seen_xrefs.add(xref)
             base_image = doc.extract_image(xref)
+            # Skip tiny images (icons, bullets, decorative elements)
+            if base_image["width"] < 50 or base_image["height"] < 50:
+                continue
             ext = base_image["ext"]
             img_path = img_dir / f"page{page_num}_img{img_count}.{ext}"
             img_path.write_bytes(base_image["image"])
