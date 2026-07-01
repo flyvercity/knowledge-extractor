@@ -1,4 +1,5 @@
 import base64
+import re
 import time
 import logging
 import os
@@ -174,12 +175,83 @@ class AIClient:
             return None
         if len(markdown.strip()) < 100:
             return markdown
-        # Truncate to avoid token limits
-        content = markdown[:15000]
-        log.debug(f"AI cleanup: {len(content)} chars")
-        return self._call([
-            {"role": "user", "content": CLEANUP_PROMPT.format(content=content)}
-        ])
+
+        # Process in chunks to avoid token limits without losing content
+        chunk_size = 12000
+        if len(markdown) <= chunk_size:
+            log.info(f"    AI cleanup: {len(markdown)} chars (single chunk)")
+            result = self._call([
+                {"role": "user", "content": CLEANUP_PROMPT.format(content=markdown)}
+            ])
+            if result:
+                log.info(f"    AI cleanup: done, {len(result)} chars returned")
+            else:
+                log.warning(f"    AI cleanup: failed, keeping original")
+            return result
+
+        # Split on section boundaries (## headers) to preserve structure
+        chunks = self._split_into_chunks(markdown, chunk_size)
+        log.info(f"    AI cleanup: {len(markdown)} chars split into {len(chunks)} chunks")
+
+        cleaned_parts = []
+        t_start = time.time()
+        for i, chunk in enumerate(chunks):
+            log.info(f"    AI cleanup chunk {i + 1}/{len(chunks)}: {len(chunk)} chars...")
+            t_chunk = time.time()
+            cleaned = self._call([
+                {"role": "user", "content": CLEANUP_PROMPT.format(content=chunk)}
+            ])
+            elapsed_chunk = time.time() - t_chunk
+            if cleaned:
+                log.info(f"    AI cleanup chunk {i + 1}/{len(chunks)}: done in {elapsed_chunk:.1f}s, {len(cleaned)} chars returned")
+                cleaned_parts.append(cleaned)
+            else:
+                log.warning(f"    AI cleanup chunk {i + 1}/{len(chunks)}: failed after {elapsed_chunk:.1f}s, keeping original")
+                cleaned_parts.append(chunk)
+
+        total_elapsed = time.time() - t_start
+        total_chars = sum(len(p) for p in cleaned_parts)
+        log.info(f"    AI cleanup: all {len(chunks)} chunks done in {total_elapsed:.1f}s, {total_chars} chars total")
+
+        return "\n\n".join(cleaned_parts)
+
+    @staticmethod
+    def _split_into_chunks(text: str, max_size: int) -> list[str]:
+        """Split markdown into chunks at section boundaries (## headers)."""
+        # Split at ## headers while keeping the header with its section
+        sections = re.split(r'(?=^## )', text, flags=re.MULTILINE)
+        sections = [s for s in sections if s.strip()]
+
+        chunks: list[str] = []
+        current = ""
+        for section in sections:
+            if len(current) + len(section) > max_size and current:
+                chunks.append(current)
+                current = section
+            else:
+                current += section
+        if current:
+            chunks.append(current)
+
+        # If no ## headers found or sections are too large, fall back to line-based split
+        final_chunks: list[str] = []
+        for chunk in chunks:
+            if len(chunk) <= max_size:
+                final_chunks.append(chunk)
+            else:
+                # Split oversized chunk at paragraph boundaries
+                lines = chunk.split("\n")
+                part = ""
+                for line in lines:
+                    if len(part) + len(line) + 1 > max_size and part:
+                        final_chunks.append(part)
+                        part = line + "\n"
+                    else:
+                        part += line + "\n"
+                if part:
+                    final_chunks.append(part)
+
+        return final_chunks
 
     def _call(self, messages: list, retries: int = 3) -> str | None:
         for attempt in range(retries):

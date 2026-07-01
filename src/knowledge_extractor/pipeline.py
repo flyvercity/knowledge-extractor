@@ -83,10 +83,13 @@ def process_file(file: DiscoveredFile, args, tracker: ProgressTracker, logger: l
 
     # 5. AI cleanup
     t0 = time.time()
+    pre_cleanup_len = len(final_md)
     cleaned = ai.cleanup_content(final_md)
     if cleaned:
         final_md = cleaned
-    log.info(f"  AI cleanup: {time.time() - t0:.2f}s")
+        log.info(f"  AI cleanup: {time.time() - t0:.2f}s ({pre_cleanup_len} → {len(final_md)} chars, {len(final_md) - pre_cleanup_len:+d})")
+    else:
+        log.info(f"  AI cleanup: {time.time() - t0:.2f}s (no change, AI unavailable or skipped)")
 
     # 6. Write final output
     out_path = args.output / file.relative_path.with_suffix(".md")
