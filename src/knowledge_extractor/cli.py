@@ -1,5 +1,6 @@
 import argparse
 import shutil
+import sys
 import time
 from pathlib import Path
 from dotenv import load_dotenv
@@ -9,6 +10,7 @@ from .discovery import discover_files
 from .tracker import ProgressTracker
 from .pipeline import process_file
 from .index import generate_index
+from .ai import AIProviderError
 
 load_dotenv()
 
@@ -92,6 +94,11 @@ def _run(args):
         try:
             process_file(file, args, tracker, log)
             processed += 1
+        except AIProviderError as e:
+            failed += 1
+            log.error(f"AI provider unavailable: {e}")
+            log.error("Aborting — AI provider is configured but not responding")
+            break
         except Exception as e:
             failed += 1
             log.error(f"Failed: {file.relative_path} - {e}", exc_info=True)
@@ -100,3 +107,6 @@ def _run(args):
 
     elapsed = time.time() - start
     log.info(f"Done in {elapsed:.1f}s — processed: {processed}, skipped: {len(files) - len(pending)}, failed: {failed}")
+
+    if failed:
+        sys.exit(1)

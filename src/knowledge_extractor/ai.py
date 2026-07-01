@@ -11,6 +11,11 @@ from openrouter import OpenRouter
 log = logging.getLogger("knowledge_extractor")
 
 
+class AIProviderError(Exception):
+    """Raised when the AI provider is configured but fails after all retries."""
+    pass
+
+
 def _clean_omml(xml_str: str) -> str:
     """Strip formatting noise from OMML XML to produce a concise math-only representation."""
     try:
@@ -183,10 +188,7 @@ class AIClient:
             result = self._call([
                 {"role": "user", "content": CLEANUP_PROMPT.format(content=markdown)}
             ])
-            if result:
-                log.info(f"    AI cleanup: done, {len(result)} chars returned")
-            else:
-                log.warning(f"    AI cleanup: failed, keeping original")
+            log.info(f"    AI cleanup: done, {len(result)} chars returned")
             return result
 
         # Split on section boundaries (## headers) to preserve structure
@@ -202,16 +204,14 @@ class AIClient:
                 {"role": "user", "content": CLEANUP_PROMPT.format(content=chunk)}
             ])
             elapsed_chunk = time.time() - t_chunk
-            if cleaned:
-                log.info(f"    AI cleanup chunk {i + 1}/{len(chunks)}: done in {elapsed_chunk:.1f}s, {len(cleaned)} chars returned")
-                cleaned_parts.append(cleaned)
-            else:
-                log.warning(f"    AI cleanup chunk {i + 1}/{len(chunks)}: failed after {elapsed_chunk:.1f}s, keeping original")
-                cleaned_parts.append(chunk)
+            log.info(f"    AI cleanup chunk {i + 1}/{len(chunks)}: done in {elapsed_chunk:.1f}s, {len(cleaned)} chars returned")
+            cleaned_parts.append(cleaned)
 
         total_elapsed = time.time() - t_start
         total_chars = sum(len(p) for p in cleaned_parts)
         log.info(f"    AI cleanup: all {len(chunks)} chunks done in {total_elapsed:.1f}s, {total_chars} chars total")
+
+        return "\n\n".join(cleaned_parts)
 
         return "\n\n".join(cleaned_parts)
 
@@ -253,7 +253,8 @@ class AIClient:
 
         return final_chunks
 
-    def _call(self, messages: list, retries: int = 3) -> str | None:
+    def _call(self, messages: list, retries: int = 3) -> str:
+        last_error = None
         for attempt in range(retries):
             try:
                 response = self.client.chat.send(model=self.model, messages=messages)
@@ -262,7 +263,10 @@ class AIClient:
                 log.debug(f"AI response: {len(result)} chars")
                 return result
             except Exception as e:
-                log.warning(f"AI call failed (attempt {attempt + 1}): {e}")
+                last_error = e
+                log.warning(f"AI call failed (attempt {attempt + 1}/{retries}): {e}")
                 if attempt < retries - 1:
                     time.sleep(2 ** attempt)
-        return None
+        raise AIProviderError(
+            f"AI provider failed after {retries} retries: {last_error}"
+        )
