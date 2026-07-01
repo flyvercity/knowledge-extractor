@@ -52,6 +52,14 @@ def render_formula_regions(
             min(page.rect.height, y1 + PADDING),
         )
 
+        # Skip degenerate regions (zero or negative dimensions)
+        if clip.is_empty or clip.width < 1 or clip.height < 1:
+            log.warning(
+                f"Skipping formula region with degenerate bbox: "
+                f"page {region.page_num}, bbox={region.bbox}"
+            )
+            continue
+
         # Render the clipped region at high DPI
         pix = page.get_pixmap(clip=clip, dpi=RENDER_DPI)
         pix.save(str(img_path))
