@@ -52,6 +52,8 @@ CLEANUP_PROMPT = """Clean up this markdown extracted from a technical document.
 - Remove non-essential content (redundant headers, boilerplate disclaimers, page numbers)
 - Preserve ALL technical information, data, and diagrams
 - Fix formatting issues
+- Lines starting with "Figure:" are image descriptions — keep them exactly as-is, do NOT convert them to markdown image syntax like ![...](...) 
+- Do NOT add any markdown image references (![...](...)) in the output
 - Output clean markdown only, no explanations.
 
 Document:

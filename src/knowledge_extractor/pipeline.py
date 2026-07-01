@@ -175,7 +175,16 @@ def _replace_images_with_ai(markdown: str, ai: AIClient) -> str:
         description = ai.describe_image(img_path, context)
         if description is None:
             continue  # Keep original if AI unavailable
-        replacement = f"\n{description}\n" if description else ""
+        if description:
+            desc_stripped = description.strip()
+            if desc_stripped.startswith("```mermaid"):
+                # Keep mermaid diagrams as-is
+                replacement = f"\n{desc_stripped}\n"
+            else:
+                # Wrap textual descriptions with Figure: prefix
+                replacement = f"\nFigure: {desc_stripped}\n"
+        else:
+            replacement = ""
         result = result[:match.start()] + replacement + result[match.end():]
 
     return result
