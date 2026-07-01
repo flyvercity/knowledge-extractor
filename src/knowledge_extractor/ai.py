@@ -4,9 +4,31 @@ import logging
 import os
 from pathlib import Path
 
+from lxml import etree
 from openrouter import OpenRouter
 
 log = logging.getLogger("knowledge_extractor")
+
+
+def _clean_omml(xml_str: str) -> str:
+    """Strip formatting noise from OMML XML to produce a concise math-only representation."""
+    try:
+        root = etree.fromstring(xml_str)
+    except etree.XMLSyntaxError:
+        return xml_str
+
+    # Remove all w:rPr (run properties / font formatting) and m:ctrlPr elements
+    # These contain font names, italic flags, etc. that don't affect math structure
+    ns_w = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+    ns_m = "http://schemas.openxmlformats.org/officeDocument/2006/math"
+    for tag in [f"{{{ns_w}}}rPr", f"{{{ns_m}}}ctrlPr", f"{{{ns_m}}}fPr"]:
+        for elem in root.findall(f".//{tag}"):
+            parent = elem.getparent()
+            if parent is not None:
+                parent.remove(elem)
+
+    etree.cleanup_namespaces(root)
+    return etree.tostring(root, encoding="unicode")
 
 IMAGE_PROMPT = """Analyze this image from a technical document.
 - If it's a diagram, flowchart, or architecture: convert to Mermaid syntax in a ```mermaid code block.
@@ -119,8 +141,9 @@ class AIClient:
             ])
         elif omml_xml is not None:
             # Text-based conversion (DOCX/PPTX OMML)
+            clean_xml = _clean_omml(omml_xml)
             prompt = FORMULA_OMML_PROMPT.format(
-                omml_xml=omml_xml[:3000],
+                omml_xml=clean_xml[:3000],
                 context=context[:300] if context else "",
             )
             response = self._call([
