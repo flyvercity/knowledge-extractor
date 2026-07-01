@@ -24,7 +24,8 @@ EXTRACTORS = {
     "image": extract_image,
 }
 
-FORMULA_PLACEHOLDER = "[FORMULA: could not be converted without API key]"
+FORMULA_PLACEHOLDER = "[FORMULA: conversion failed]"
+FORMULA_NO_API_PLACEHOLDER = "[FORMULA: no API key]"
 
 _ai_client: AIClient | None = None
 
@@ -123,7 +124,11 @@ def _process_formulas(
             else:
                 replacement = f"\n$$\n{latex}\n$$\n"
         else:
-            replacement = FORMULA_PLACEHOLDER
+            if not ai.client:
+                replacement = FORMULA_NO_API_PLACEHOLDER
+            else:
+                log.warning(f"Formula {idx} conversion returned None")
+                replacement = FORMULA_PLACEHOLDER
 
         result = result[:match.start()] + replacement + result[match.end():]
 
