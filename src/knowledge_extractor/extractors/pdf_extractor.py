@@ -13,7 +13,7 @@ def extract_pdf(file_path: Path, temp_dir: Path) -> ExtractionResult:
     # First pass: detect formula regions across all pages
     formula_regions = detect_pdf_formulas(doc)
     # Render formula regions as images
-    render_formula_regions(doc, formula_regions, temp_dir)
+    render_formula_regions(doc, formula_regions, temp_dir, source_file=file_path)
 
     # Build a lookup: page_num -> list of (region_index, FormulaRegion)
     page_formulas: dict[int, list[tuple[int, FormulaRegion]]] = {}

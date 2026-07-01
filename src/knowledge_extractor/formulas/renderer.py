@@ -1,5 +1,6 @@
 """Render PDF formula regions as cropped PNG images for AI vision."""
 
+import hashlib
 import logging
 from pathlib import Path
 
@@ -19,6 +20,7 @@ def render_formula_regions(
     doc: pymupdf.Document,
     regions: list[FormulaRegion],
     temp_dir: Path,
+    source_file: Path | None = None,
 ) -> list[FormulaRegion]:
     """Render detected formula regions as PNG images.
 
@@ -28,7 +30,13 @@ def render_formula_regions(
     if not regions:
         return regions
 
-    formulas_dir = temp_dir / "formulas"
+    if source_file is not None:
+        # Per-file subdirectory (same scheme as images)
+        h = hashlib.md5(str(source_file).encode()).hexdigest()[:8]
+        safe_name = source_file.stem[:40].replace(" ", "_") + f"_{h}"
+        formulas_dir = temp_dir / "formulas" / safe_name
+    else:
+        formulas_dir = temp_dir / "formulas"
     formulas_dir.mkdir(parents=True, exist_ok=True)
 
     for idx, region in enumerate(regions):
