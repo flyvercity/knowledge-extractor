@@ -11,6 +11,9 @@ log = logging.getLogger("knowledge_extractor")
 # Path to the project-level pymarkdown config file
 _CONFIG_PATH = Path(__file__).resolve().parent.parent.parent / ".pymarkdown.json"
 
+# Maximum file size (in bytes) to attempt linting — larger files cause excessive processing time
+_MAX_LINT_SIZE = 512 * 1024  # 512 KB
+
 
 @dataclass
 class LintResult:
@@ -19,6 +22,7 @@ class LintResult:
     file_path: Path
     fixed_count: int = 0
     remaining_failures: list[str] = field(default_factory=list)
+    skipped: bool = False
 
 
 def lint_file(file_path: Path) -> LintResult:
@@ -26,8 +30,16 @@ def lint_file(file_path: Path) -> LintResult:
 
     Scans the file for issues, applies auto-fixes, then re-scans to report
     remaining unfixable issues. Returns a LintResult with statistics.
+
+    Files larger than _MAX_LINT_SIZE are skipped to avoid excessive processing time.
     """
     result = LintResult(file_path=file_path)
+
+    file_size = file_path.stat().st_size
+    if file_size > _MAX_LINT_SIZE:
+        log.info(f"Skipping lint for {file_path.name} ({file_size // 1024}KB exceeds {_MAX_LINT_SIZE // 1024}KB limit)")
+        result.skipped = True
+        return result
 
     try:
         # Initial scan to count issues before fixing

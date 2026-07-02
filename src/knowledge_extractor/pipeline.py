@@ -105,7 +105,10 @@ def process_file(file: DiscoveredFile, args, tracker: ProgressTracker, logger: l
     # 7. Markdown lint fix
     t0 = time.time()
     lint_result = lint_file(out_path)
-    log.info(f"  Lint: {time.time() - t0:.2f}s ({lint_result.fixed_count} fixed, {len(lint_result.remaining_failures)} remaining)")
+    if lint_result.skipped:
+        log.info(f"  Lint: skipped (file too large)")
+    else:
+        log.info(f"  Lint: {time.time() - t0:.2f}s ({lint_result.fixed_count} fixed, {len(lint_result.remaining_failures)} remaining)")
 
     # 8. Track
     tracker.mark_processed(file, out_path)
