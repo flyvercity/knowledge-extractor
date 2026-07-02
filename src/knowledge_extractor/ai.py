@@ -253,8 +253,20 @@ class AIClient:
 
         return final_chunks
 
-    def _call(self, messages: list, retries: int = 3) -> str:
+    def _call(self, messages: list, retries: int = 5) -> str:
         last_error = None
+        # Compute request metadata for diagnostics
+        payload_chars = sum(
+            len(str(m.get("content", ""))) if isinstance(m, dict) else 0
+            for m in messages
+        )
+        has_image = any(
+            isinstance(m.get("content"), list) and
+            any(c.get("type") == "image_url" for c in m["content"] if isinstance(c, dict))
+            for m in messages if isinstance(m, dict)
+        )
+        req_type = "vision" if has_image else "text"
+
         for attempt in range(retries):
             try:
                 response = self.client.chat.send(model=self.model, messages=messages)
@@ -264,9 +276,32 @@ class AIClient:
                 return result
             except Exception as e:
                 last_error = e
-                log.warning(f"AI call failed (attempt {attempt + 1}/{retries}): {e}")
+                error_type = type(e).__name__
+                status = getattr(e, 'status_code', None)
+                message = getattr(e, 'message', str(e))
+                body = getattr(e, 'body', None)
+
+                diag_parts = [
+                    f"type={error_type}",
+                    f"status={status}" if status else None,
+                    f"message={message}",
+                    f"model={self.model}",
+                    f"req={req_type}",
+                    f"payload={payload_chars} chars",
+                    f"call_num={self.calls + 1}",
+                ]
+                diag = ", ".join(p for p in diag_parts if p)
+
                 if attempt < retries - 1:
-                    time.sleep(2 ** attempt)
+                    delay = 2 ** (attempt + 1)  # 2, 4, 8, 16s
+                    log.warning(f"AI call failed (attempt {attempt + 1}/{retries}): [{diag}] — retrying in {delay}s")
+                    time.sleep(delay)
+                else:
+                    log.error(f"AI call failed (attempt {attempt + 1}/{retries}): [{diag}]")
+                    if body:
+                        log.error(f"AI error response body: {body}")
+
         raise AIProviderError(
-            f"AI provider failed after {retries} retries: {last_error}"
+            f"AI provider failed after {retries} retries ({req_type}, {payload_chars} chars, "
+            f"status={getattr(last_error, 'status_code', 'unknown')}): {last_error}"
         )
