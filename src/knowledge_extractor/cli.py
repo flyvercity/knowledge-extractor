@@ -26,9 +26,10 @@ def main():
     parser.add_argument("--model", default="google/gemini-3.1-flash-lite", help="OpenRouter model")
 
     # Clear subcommand
-    clear_parser = sub.add_parser("clear", help="Remove output and temp directories")
+    clear_parser = sub.add_parser("clear", help="Remove temp directory (or all with --all)")
     clear_parser.add_argument("--output", type=Path, default=Path("./output"), help="Output directory")
     clear_parser.add_argument("--temp", type=Path, default=Path("./temp"), help="Intermediate data directory")
+    clear_parser.add_argument("--all", action="store_true", help="Also remove output directory")
 
     args = parser.parse_args()
 
@@ -43,7 +44,10 @@ def main():
 
 
 def _clear(args):
-    dirs = [(args.temp, "temp"), (args.output, "output")]
+    dirs = [(args.temp, "temp")]
+    if getattr(args, "all", False):
+        dirs.append((args.output, "output"))
+
     existing = [(p, name) for p, name in dirs if p.exists()]
     if not existing:
         print("Nothing to clear.")
