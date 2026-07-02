@@ -8,9 +8,9 @@ from dotenv import load_dotenv
 from .logging_setup import setup_logging
 from .discovery import discover_files
 from .tracker import ProgressTracker
-from .pipeline import process_file
+from .pipeline import process_file, get_ai_client
 from .index import generate_index
-from .ai import AIProviderError
+from .ai import AIProviderError, AIBadRequestError
 
 load_dotenv()
 
@@ -23,7 +23,7 @@ def main():
     parser.add_argument("--input", type=Path, help="Input directory")
     parser.add_argument("--output", type=Path, default=Path("./output"), help="Output directory")
     parser.add_argument("--temp", type=Path, default=Path("./temp"), help="Intermediate data directory")
-    parser.add_argument("--model", default="google/gemini-3.1-flash-lite", help="OpenRouter model")
+    parser.add_argument("--model", default="mistralai/mistral-small-2603", help="OpenRouter model")
 
     # Clear subcommand
     clear_parser = sub.add_parser("clear", help="Remove temp directory (or all with --all)")
@@ -108,6 +108,11 @@ def _run(args):
             log.error(f"Failed: {file.relative_path} - {e}", exc_info=True)
 
     generate_index(args.output, args.input, log)
+
+    # Log AI usage summary
+    ai_client = get_ai_client()
+    if ai_client and ai_client.calls > 0:
+        ai_client.log_usage_summary()
 
     elapsed = time.time() - start
     log.info(f"Done in {elapsed:.1f}s — processed: {processed}, skipped: {len(files) - len(pending)}, failed: {failed}")

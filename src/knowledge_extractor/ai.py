@@ -16,6 +16,15 @@ class AIProviderError(Exception):
     pass
 
 
+class AIBadRequestError(Exception):
+    """Raised when the AI provider returns a 400 bad request (non-retryable)."""
+    pass
+
+
+# HTTP status codes that should not be retried
+_NO_RETRY_STATUSES = {400, 401, 403, 404}
+
+
 def _clean_omml(xml_str: str) -> str:
     """Strip formatting noise from OMML XML to produce a concise math-only representation."""
     try:
@@ -96,6 +105,9 @@ class AIClient:
         self.client = OpenRouter(api_key=api_key) if api_key else None
         self.model = model
         self.calls = 0
+        self.total_prompt_tokens = 0
+        self.total_completion_tokens = 0
+        self.total_cost = 0.0
 
     def describe_image(self, image_path: Path, context: str = "") -> str | None:
         if not self.client:
@@ -108,12 +120,17 @@ class AIClient:
         prompt = IMAGE_PROMPT.format(context=context[:500] if context else "No context available")
         log.debug(f"AI describe_image: {image_path.name}, context={context[:80]}...")
 
-        response = self._call([
-            {"role": "user", "content": [
-                {"type": "text", "text": prompt},
-                {"type": "image_url", "image_url": {"url": f"data:{mime};base64,{data}"}},
-            ]}
-        ])
+        try:
+            response = self._call([
+                {"role": "user", "content": [
+                    {"type": "text", "text": prompt},
+                    {"type": "image_url", "image_url": {"url": f"data:{mime};base64,{data}"}},
+                ]}
+            ])
+        except AIBadRequestError as e:
+            log.warning(f"AI: skipping image {image_path.name} — unprocessable: {e}")
+            return None
+
         if response and response.strip().upper() == "DECORATIVE":
             log.debug(f"AI: image {image_path.name} classified as decorative")
             return ""
@@ -131,32 +148,37 @@ class AIClient:
         if not self.client:
             return None
 
-        if image_path is not None:
-            # Image-based conversion (PDF formulas)
-            data = base64.b64encode(image_path.read_bytes()).decode()
-            ext = image_path.suffix.lower().lstrip(".")
-            mime = {"jpg": "image/jpeg", "jpeg": "image/jpeg", "png": "image/png",
-                    "gif": "image/gif"}.get(ext, "image/png")
+        try:
+            if image_path is not None:
+                # Image-based conversion (PDF formulas)
+                data = base64.b64encode(image_path.read_bytes()).decode()
+                ext = image_path.suffix.lower().lstrip(".")
+                mime = {"jpg": "image/jpeg", "jpeg": "image/jpeg", "png": "image/png",
+                        "gif": "image/gif"}.get(ext, "image/png")
 
-            prompt = FORMULA_IMAGE_PROMPT.format(context=context[:300] if context else "")
-            response = self._call([
-                {"role": "user", "content": [
-                    {"type": "text", "text": prompt},
-                    {"type": "image_url", "image_url": {"url": f"data:{mime};base64,{data}"}},
-                ]}
-            ])
-        elif omml_xml is not None:
-            # Text-based conversion (DOCX/PPTX OMML)
-            clean_xml = _clean_omml(omml_xml)
-            prompt = FORMULA_OMML_PROMPT.format(
-                omml_xml=clean_xml[:3000],
-                context=context[:300] if context else "",
-            )
-            response = self._call([
-                {"role": "user", "content": prompt}
-            ])
-        else:
-            log.warning("convert_formula_to_latex called without image or OMML")
+                prompt = FORMULA_IMAGE_PROMPT.format(context=context[:300] if context else "")
+                response = self._call([
+                    {"role": "user", "content": [
+                        {"type": "text", "text": prompt},
+                        {"type": "image_url", "image_url": {"url": f"data:{mime};base64,{data}"}},
+                    ]}
+                ])
+            elif omml_xml is not None:
+                # Text-based conversion (DOCX/PPTX OMML)
+                clean_xml = _clean_omml(omml_xml)
+                prompt = FORMULA_OMML_PROMPT.format(
+                    omml_xml=clean_xml[:3000],
+                    context=context[:300] if context else "",
+                )
+                response = self._call([
+                    {"role": "user", "content": prompt}
+                ])
+            else:
+                log.warning("convert_formula_to_latex called without image or OMML")
+                return None
+        except AIBadRequestError as e:
+            src = image_path.name if image_path else "OMML"
+            log.warning(f"AI: skipping formula ({src}) — unprocessable: {e}")
             return None
 
         if response and response.strip().upper() == "UNCLEAR":
@@ -253,6 +275,16 @@ class AIClient:
 
         return final_chunks
 
+    def log_usage_summary(self):
+        """Log a summary of total AI usage and cost."""
+        total_tokens = self.total_prompt_tokens + self.total_completion_tokens
+        log.info(
+            f"AI usage: {self.calls} calls, "
+            f"{total_tokens:,} tokens ({self.total_prompt_tokens:,} prompt + "
+            f"{self.total_completion_tokens:,} completion), "
+            f"cost: ${self.total_cost:.4f}"
+        )
+
     def _call(self, messages: list, retries: int = 5) -> str:
         last_error = None
         # Compute request metadata for diagnostics
@@ -272,7 +304,23 @@ class AIClient:
                 response = self.client.chat.send(model=self.model, messages=messages)
                 self.calls += 1
                 result = response.choices[0].message.content
-                log.debug(f"AI response: {len(result)} chars")
+
+                # Track usage/cost
+                if response.usage:
+                    prompt_tok = response.usage.prompt_tokens or 0
+                    compl_tok = response.usage.completion_tokens or 0
+                    raw_cost = getattr(response.usage, 'cost', None)
+                    cost = float(raw_cost) if isinstance(raw_cost, (int, float)) else 0.0
+                    self.total_prompt_tokens += prompt_tok
+                    self.total_completion_tokens += compl_tok
+                    self.total_cost += cost
+                    log.debug(
+                        f"AI response: {len(result)} chars, "
+                        f"tokens={prompt_tok}+{compl_tok}, cost=${cost:.6f}"
+                    )
+                else:
+                    log.debug(f"AI response: {len(result)} chars (no usage data)")
+
                 return result
             except Exception as e:
                 last_error = e
@@ -291,6 +339,19 @@ class AIClient:
                     f"call_num={self.calls + 1}",
                 ]
                 diag = ", ".join(p for p in diag_parts if p)
+
+                # Non-retryable: bad input or auth — no point retrying
+                if status in _NO_RETRY_STATUSES:
+                    log.error(f"AI call failed (non-retryable, status={status}): [{diag}]")
+                    if body:
+                        log.error(f"AI error response body: {body}")
+                    if status == 400:
+                        raise AIBadRequestError(
+                            f"AI provider rejected request (400, {req_type}, {payload_chars} chars): {message}"
+                        ) from e
+                    raise AIProviderError(
+                        f"AI provider error (status={status}): {message}"
+                    ) from e
 
                 if attempt < retries - 1:
                     delay = 2 ** (attempt + 1)  # 2, 4, 8, 16s

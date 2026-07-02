@@ -37,6 +37,11 @@ def _get_ai(model: str) -> AIClient:
     return _ai_client
 
 
+def get_ai_client() -> AIClient | None:
+    """Return the AI client instance (for usage summary), or None if not initialized."""
+    return _ai_client
+
+
 def process_file(file: DiscoveredFile, args, tracker: ProgressTracker, logger: logging.Logger):
     start = time.time()
 
