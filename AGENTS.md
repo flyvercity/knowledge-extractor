@@ -13,6 +13,7 @@ src/knowledge_extractor/
 ├── tracker.py          # JSON-based resume/progress tracking
 ├── logging_setup.py    # Dual console + file logging
 ├── filters.py          # Heuristic boilerplate removal
+├── linter.py           # Markdown lint fix via pymarkdownlnt
 ├── ai.py               # OpenRouter client (vision + cleanup + formula conversion)
 ├── pipeline.py         # Per-file processing orchestration
 ├── index.py            # Flat index.md generation
@@ -43,7 +44,7 @@ src/knowledge_extractor/
 
 ## Dependencies
 
-openrouter, python-docx, python-pptx, openpyxl, pymupdf, Pillow, lxml
+openrouter, python-docx, python-pptx, openpyxl, pymupdf, Pillow, lxml, pymarkdownlnt
 
 ## Tested
 

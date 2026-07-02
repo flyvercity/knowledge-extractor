@@ -13,6 +13,7 @@ dependencies = [
     "Pillow",
     "python-dotenv",
     "lxml",
+    "pymarkdownlnt",
 ]
 
 [project.scripts]

@@ -45,6 +45,7 @@ uv run python main.py --input ./input --output ./output --temp ./temp --model go
 - **AI image analysis** — converts diagrams to Mermaid, charts to descriptions (requires API key)
 - **LaTeX formula extraction** — detects mathematical formulas in DOCX/PPTX (OMML) and PDF (heuristic font/character analysis), converts to LaTeX via AI vision. Inline formulas wrapped with `$...$`, display formulas with `$$...$$`. Requires API key; without it, a placeholder is inserted.
 - **Heuristic filtering** — removes title slides, logo-only sections, repeated headers
+- **Markdown linting** — auto-fixes formatting issues (trailing spaces, heading spacing, list indentation) via pymarkdownlnt
 - **Logging** — console output + `output/extraction.log`
 
 ## Output

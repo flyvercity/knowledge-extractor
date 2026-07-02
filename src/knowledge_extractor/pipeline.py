@@ -7,6 +7,7 @@ from .discovery import DiscoveredFile
 from .tracker import ProgressTracker
 from .filters import filter_content
 from .ai import AIClient
+from .linter import lint_file, LintResult
 from .formulas import ExtractionResult, FormulaRef, FormulaRegion, FORMULA_MARKER_PATTERN
 from .extractors.docx_extractor import extract_docx
 from .extractors.pptx_extractor import extract_pptx
@@ -42,7 +43,7 @@ def get_ai_client() -> AIClient | None:
     return _ai_client
 
 
-def process_file(file: DiscoveredFile, args, tracker: ProgressTracker, logger: logging.Logger):
+def process_file(file: DiscoveredFile, args, tracker: ProgressTracker, logger: logging.Logger) -> LintResult:
     start = time.time()
 
     # 1. Extract
@@ -101,10 +102,17 @@ def process_file(file: DiscoveredFile, args, tracker: ProgressTracker, logger: l
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(final_md, encoding="utf-8")
 
-    # 7. Track
+    # 7. Markdown lint fix
+    t0 = time.time()
+    lint_result = lint_file(out_path)
+    log.info(f"  Lint: {time.time() - t0:.2f}s ({lint_result.fixed_count} fixed, {len(lint_result.remaining_failures)} remaining)")
+
+    # 8. Track
     tracker.mark_processed(file, out_path)
     elapsed = time.time() - start
     log.info(f"  Total: {elapsed:.1f}s")
+
+    return lint_result
 
 
 def _process_formulas(

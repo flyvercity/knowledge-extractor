@@ -9,6 +9,7 @@ from .logging_setup import setup_logging
 from .discovery import discover_files
 from .tracker import ProgressTracker
 from .pipeline import process_file, get_ai_client
+from .linter import LintResult
 from .index import generate_index
 from .ai import AIProviderError, AIBadRequestError
 
@@ -93,11 +94,16 @@ def _run(args):
 
     start = time.time()
     processed = failed = 0
+    total_lint_fixes = 0
+    total_lint_remaining = 0
     for i, file in enumerate(pending, 1):
         log.info(f"[{i}/{len(pending)}] Processing: {file.relative_path}")
         try:
-            process_file(file, args, tracker, log)
+            lint_result = process_file(file, args, tracker, log)
             processed += 1
+            if lint_result:
+                total_lint_fixes += lint_result.fixed_count
+                total_lint_remaining += len(lint_result.remaining_failures)
         except AIProviderError as e:
             failed += 1
             log.error(f"AI provider unavailable: {e}")
@@ -113,6 +119,10 @@ def _run(args):
     ai_client = get_ai_client()
     if ai_client and ai_client.calls > 0:
         ai_client.log_usage_summary()
+
+    # Log lint summary
+    if total_lint_fixes > 0 or total_lint_remaining > 0:
+        log.info(f"Lint: {total_lint_fixes} fixes applied across {processed} files, {total_lint_remaining} unfixed issues remaining")
 
     elapsed = time.time() - start
     log.info(f"Done in {elapsed:.1f}s — processed: {processed}, skipped: {len(files) - len(pending)}, failed: {failed}")
