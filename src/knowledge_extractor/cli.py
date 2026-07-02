@@ -101,13 +101,12 @@ def _lint(args):
         t0 = time.time()
         result = lint_file(f)
         elapsed_file = time.time() - t0
-        if result.skipped:
-            print(f"skipped (file too large)")
-        elif result.fixed_count > 0:
+        mode = " [fast]" if result.fast_mode else ""
+        if result.fixed_count > 0:
             files_with_fixes += 1
-            print(f"{result.fixed_count} fixed, {len(result.remaining_failures)} remaining ({elapsed_file:.1f}s)")
+            print(f"{result.fixed_count} fixed, {len(result.remaining_failures)} remaining ({elapsed_file:.1f}s){mode}")
         else:
-            print(f"clean ({elapsed_file:.1f}s)")
+            print(f"clean ({elapsed_file:.1f}s){mode}")
         total_fixed += result.fixed_count
         total_remaining += len(result.remaining_failures)
 
