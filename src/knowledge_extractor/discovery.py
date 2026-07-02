@@ -12,6 +12,9 @@ SUPPORTED = {
 }
 
 
+SKIP_DIRS = {".git"}
+
+
 @dataclass
 class DiscoveredFile:
     path: Path
@@ -22,6 +25,8 @@ class DiscoveredFile:
 def discover_files(input_dir: Path) -> list[DiscoveredFile]:
     files = []
     for p in sorted(input_dir.rglob("*")):
+        if any(part in SKIP_DIRS for part in p.relative_to(input_dir).parts):
+            continue
         if p.is_file() and p.suffix.lower() in SUPPORTED:
             files.append(DiscoveredFile(
                 path=p,
