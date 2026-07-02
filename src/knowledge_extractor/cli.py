@@ -96,10 +96,16 @@ def _lint(args):
     files_with_fixes = 0
 
     for i, f in enumerate(files, 1):
+        rel = f.relative_to(directory)
+        print(f"  [{i}/{len(files)}] {rel} ... ", end="", flush=True)
+        t0 = time.time()
         result = lint_file(f)
+        elapsed_file = time.time() - t0
         if result.fixed_count > 0:
             files_with_fixes += 1
-            print(f"  [{i}/{len(files)}] {f.relative_to(directory)}: {result.fixed_count} fixed, {len(result.remaining_failures)} remaining")
+            print(f"{result.fixed_count} fixed, {len(result.remaining_failures)} remaining ({elapsed_file:.1f}s)")
+        else:
+            print(f"clean ({elapsed_file:.1f}s)")
         total_fixed += result.fixed_count
         total_remaining += len(result.remaining_failures)
 
