@@ -9,7 +9,7 @@ from .logging_setup import setup_logging
 from .discovery import discover_files
 from .tracker import ProgressTracker
 from .pipeline import process_file, get_ai_client
-from .linter import LintResult
+from .linter import lint_file, LintResult
 from .index import generate_index
 from .ai import AIProviderError, AIBadRequestError
 
@@ -32,10 +32,18 @@ def main():
     clear_parser.add_argument("--temp", type=Path, default=Path("./temp"), help="Intermediate data directory")
     clear_parser.add_argument("--all", action="store_true", help="Also remove output directory")
 
+    # Lint subcommand
+    lint_parser = sub.add_parser("lint", help="Re-lint all markdown files in a directory")
+    lint_parser.add_argument("directory", type=Path, help="Directory containing markdown files to lint")
+
     args = parser.parse_args()
 
     if args.command == "clear":
         _clear(args)
+        return
+
+    if args.command == "lint":
+        _lint(args)
         return
 
     if not args.input:
@@ -67,6 +75,36 @@ def _clear(args):
             print(f"  Partially removed {p} (some files locked)")
         else:
             print(f"  Removed {p}")
+
+
+def _lint(args):
+    """Re-lint all markdown files in the given directory."""
+    directory = args.directory.resolve()
+    if not directory.exists():
+        print(f"Directory not found: {directory}")
+        sys.exit(1)
+
+    files = sorted(directory.rglob("*.md"))
+    if not files:
+        print(f"No markdown files found in {directory}")
+        return
+
+    print(f"Linting {len(files)} markdown files in {directory}")
+    start = time.time()
+    total_fixed = 0
+    total_remaining = 0
+    files_with_fixes = 0
+
+    for i, f in enumerate(files, 1):
+        result = lint_file(f)
+        if result.fixed_count > 0:
+            files_with_fixes += 1
+            print(f"  [{i}/{len(files)}] {f.relative_to(directory)}: {result.fixed_count} fixed, {len(result.remaining_failures)} remaining")
+        total_fixed += result.fixed_count
+        total_remaining += len(result.remaining_failures)
+
+    elapsed = time.time() - start
+    print(f"\nDone in {elapsed:.1f}s — {total_fixed} fixes applied across {files_with_fixes} files, {total_remaining} unfixed issues remaining")
 
 
 def _run(args):
