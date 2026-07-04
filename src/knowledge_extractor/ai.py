@@ -203,15 +203,15 @@ class AIClient:
         if len(markdown.strip()) < 100:
             return markdown
 
-        # Process in chunks to avoid token limits without losing content
-        chunk_size = 12000
-        if len(markdown) <= chunk_size:
-            log.info(f"    AI cleanup: {len(markdown)} chars (single chunk)")
-            result = self._call([
-                {"role": "user", "content": CLEANUP_PROMPT.format(content=markdown)}
+        prompt = CLEANUP_PROMPT.format(content=markdown[:10000])
+        try:
+            response = self._call([
+                {"role": "user", "content": prompt}
             ])
-            log.info(f"    AI cleanup: done, {len(result)} chars returned")
-            return result
+        except AIBadRequestError as e:
+            log.warning(f"AI: content cleanup failed — unprocessable: {e}")
+            return None
+        return response
 
         # Split on section boundaries (## headers) to preserve structure
         chunks = self._split_into_chunks(markdown, chunk_size)
