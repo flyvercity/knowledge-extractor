@@ -40,3 +40,4 @@ class ExtractionResult:
 
     markdown: str
     formulas: list[FormulaRef | FormulaRegion] = field(default_factory=list)
+    is_scanned: bool = False

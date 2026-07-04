@@ -74,6 +74,12 @@ def process_file(file: DiscoveredFile, args, tracker: ProgressTracker, logger: l
     else:
         log.info(f"  Formulas: skipped (none detected)")
 
+    # 2b. OCR scanned pages (before filtering, so text is present)
+    if extraction.is_scanned:
+        t0 = time.time()
+        intermediate_md = _ocr_scanned_pages(intermediate_md, ai)
+        log.info(f"  OCR: {time.time() - t0:.2f}s")
+
     # 3. Heuristic filter
     t0 = time.time()
     filtered_md = filter_content(intermediate_md, file.format_type)
@@ -87,15 +93,19 @@ def process_file(file: DiscoveredFile, args, tracker: ProgressTracker, logger: l
     final_md = _replace_images_with_ai(filtered_md, ai)
     log.info(f"  AI images: {time.time() - t0:.2f}s ({img_count} images done)")
 
-    # 5. AI cleanup
+    # 5. AI cleanup (skip for scanned PDFs — OCR output is already clean text,
+    #    and the cleanup truncates to 10k chars which destroys large documents)
     t0 = time.time()
     pre_cleanup_len = len(final_md)
-    cleaned = ai.cleanup_content(final_md)
-    if cleaned:
-        final_md = cleaned
-        log.info(f"  AI cleanup: {time.time() - t0:.2f}s ({pre_cleanup_len} → {len(final_md)} chars, {len(final_md) - pre_cleanup_len:+d})")
+    if extraction.is_scanned:
+        log.info(f"  AI cleanup: skipped (scanned PDF, OCR output used directly)")
     else:
-        log.info(f"  AI cleanup: {time.time() - t0:.2f}s (no change, AI unavailable or skipped)")
+        cleaned = ai.cleanup_content(final_md)
+        if cleaned:
+            final_md = cleaned
+            log.info(f"  AI cleanup: {time.time() - t0:.2f}s ({pre_cleanup_len} → {len(final_md)} chars, {len(final_md) - pre_cleanup_len:+d})")
+        else:
+            log.info(f"  AI cleanup: {time.time() - t0:.2f}s (no change, AI unavailable or skipped)")
 
     # 6. Write final output
     out_path = args.output / file.relative_path.with_suffix(".md")
@@ -175,6 +185,66 @@ def _convert_single_formula(
             log.warning(f"Formula region on page {formula.page_num} has no image")
             return None
     return None
+
+
+def _ocr_scanned_pages(markdown: str, ai: AIClient) -> str:
+    """Replace ![ocr](...) markers with OCR-extracted text from scanned pages."""
+    pattern = re.compile(r"!\[ocr\]\((.+?)\)")
+    matches = list(pattern.finditer(markdown))
+    if not matches:
+        return markdown
+
+    total = len(matches)
+    log.info(f"  OCR: processing {total} scanned pages...")
+    t_start = time.time()
+    result = markdown
+    successful = 0
+    blank = 0
+    failed = 0
+    total_chars = 0
+
+    for i, match in enumerate(reversed(matches)):  # reverse to preserve positions
+        page_num = total - i  # since we're reversed, this gives original page order
+        img_path = Path(match.group(1))
+
+        if not img_path.exists():
+            log.warning(f"    OCR page {page_num}: image not found: {img_path}")
+            failed += 1
+            continue
+
+        text = ai.ocr_page(img_path)
+        if text is None:
+            # AI unavailable — keep the image ref so it's not lost
+            failed += 1
+            continue
+        if text:
+            result = result[:match.start()] + text + result[match.end():]
+            successful += 1
+            total_chars += len(text)
+        else:
+            # Blank page
+            result = result[:match.start()] + result[match.end():]
+            blank += 1
+
+        # Progress report every 10% or every 20 pages for large docs
+        done = i + 1
+        interval = max(1, min(total // 10, 20))
+        if done % interval == 0 or done == total:
+            elapsed = time.time() - t_start
+            rate = done / elapsed if elapsed > 0 else 0
+            remaining = (total - done) / rate if rate > 0 else 0
+            log.info(
+                f"    OCR progress: {done}/{total} pages "
+                f"({elapsed:.0f}s elapsed, ~{remaining:.0f}s remaining, "
+                f"{total_chars:,} chars extracted)"
+            )
+
+    elapsed = time.time() - t_start
+    log.info(
+        f"  OCR done: {successful} extracted, {blank} blank, {failed} failed "
+        f"({total_chars:,} chars total, {elapsed:.1f}s)"
+    )
+    return result
 
 
 def _replace_images_with_ai(markdown: str, ai: AIClient) -> str:

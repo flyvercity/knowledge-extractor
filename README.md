@@ -43,6 +43,7 @@ uv run python main.py --input ./input --output ./output --temp ./temp --model go
 - **Incremental processing** — tracks completed files in `temp/progress.json`, skips on re-run
 - **Intermediate results** — per-file markdown with original image references saved to temp dir
 - **AI image analysis** — converts diagrams to Mermaid, charts to descriptions (requires API key)
+- **OCR for scanned PDFs** — auto-detects scanned/image-only PDFs and extracts text via AI vision OCR (requires API key)
 - **LaTeX formula extraction** — detects mathematical formulas in DOCX/PPTX (OMML) and PDF (heuristic font/character analysis), converts to LaTeX via AI vision. Inline formulas wrapped with `$...$`, display formulas with `$$...$$`. Requires API key; without it, a placeholder is inserted.
 - **Heuristic filtering** — removes title slides, logo-only sections, repeated headers
 - **Markdown linting** — auto-fixes formatting issues (trailing spaces, heading spacing, list indentation) via pymarkdownlnt
