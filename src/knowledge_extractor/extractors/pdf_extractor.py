@@ -21,8 +21,16 @@ def extract_pdf(file_path: Path, temp_dir: Path) -> ExtractionResult:
         doc.close()
         return ExtractionResult(markdown="", formulas=[])
 
-    # Quick scan: count pages without extractable text
-    empty_pages = sum(1 for page in doc if not page.get_text("text").strip())
+    # Quick scan: count pages without extractable text (short-circuit when possible)
+    empty_pages = 0
+    for i in range(total_pages):
+        page = doc.load_page(i)
+        if not page.get_text("text").strip():
+            empty_pages += 1
+        remaining = total_pages - (i + 1)
+        # If even if all remaining pages were empty we still wouldn't reach the threshold, stop scanning early
+        if (empty_pages + remaining) / total_pages < SCANNED_THRESHOLD:
+            break
     scanned_ratio = empty_pages / total_pages
     is_scanned = scanned_ratio >= SCANNED_THRESHOLD
 

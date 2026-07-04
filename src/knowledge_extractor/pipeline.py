@@ -75,9 +75,9 @@ def process_file(file: DiscoveredFile, args, tracker: ProgressTracker, logger: l
         log.info(f"  Formulas: skipped (none detected)")
 
     # 2b. OCR scanned pages (before filtering, so text is present)
+    t0 = time.time()
+    intermediate_md = _ocr_scanned_pages(intermediate_md, ai)
     if extraction.is_scanned:
-        t0 = time.time()
-        intermediate_md = _ocr_scanned_pages(intermediate_md, ai)
         log.info(f"  OCR: {time.time() - t0:.2f}s")
 
     # 3. Heuristic filter
@@ -204,11 +204,11 @@ def _ocr_scanned_pages(markdown: str, ai: AIClient) -> str:
     total_chars = 0
 
     for i, match in enumerate(reversed(matches)):  # reverse to preserve positions
-        page_num = total - i  # since we're reversed, this gives original page order
         img_path = Path(match.group(1))
+        page_label = img_path.stem or str(total - i)
 
         if not img_path.exists():
-            log.warning(f"    OCR page {page_num}: image not found: {img_path}")
+            log.warning(f"    OCR {page_label}: image not found: {img_path}")
             failed += 1
             continue
 
