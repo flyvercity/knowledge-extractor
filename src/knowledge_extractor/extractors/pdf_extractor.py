@@ -1,15 +1,90 @@
 from pathlib import Path
+import logging
 import pymupdf
 from .utils import get_img_dir
 from ..formulas import FormulaRegion, ExtractionResult
 from ..formulas.pdf_formulas import detect_formulas as detect_pdf_formulas
 from ..formulas.renderer import render_formula_regions
 
+log = logging.getLogger("knowledge_extractor")
+
+# If this fraction (or more) of pages have no extractable text, treat as scanned PDF
+SCANNED_THRESHOLD = 0.8
+
 
 def extract_pdf(file_path: Path, temp_dir: Path) -> ExtractionResult:
     doc = pymupdf.open(str(file_path))
     img_dir = get_img_dir(temp_dir, file_path)
 
+    total_pages = len(doc)
+    if total_pages == 0:
+        doc.close()
+        return ExtractionResult(markdown="", formulas=[])
+
+    # Quick scan: count pages without extractable text (short-circuit when possible)
+    empty_pages = 0
+    for i in range(total_pages):
+        page = doc.load_page(i)
+        if not page.get_text("text").strip():
+            empty_pages += 1
+        remaining = total_pages - (i + 1)
+        # If even if all remaining pages were empty we still wouldn't reach the threshold, stop scanning early
+        if (empty_pages + remaining) / total_pages < SCANNED_THRESHOLD:
+            break
+    scanned_ratio = empty_pages / total_pages
+    is_scanned = scanned_ratio >= SCANNED_THRESHOLD
+
+    if is_scanned:
+        log.info(
+            f"  PDF detected as scanned ({empty_pages}/{total_pages} pages "
+            f"have no text, ratio={scanned_ratio:.0%}). Will use OCR."
+        )
+        result = _extract_scanned_pdf(doc, img_dir)
+    else:
+        result = _extract_text_pdf(doc, img_dir, temp_dir, file_path)
+
+    doc.close()
+    return result
+
+
+def _extract_scanned_pdf(doc: pymupdf.Document, img_dir: Path) -> ExtractionResult:
+    """Extract a scanned PDF by rendering pages as images for OCR.
+
+    Instead of using the generic image description prompt (designed for
+    diagrams/charts), we mark these images with a special OCR tag so the
+    pipeline can use an OCR-specific prompt.
+    """
+    lines = []
+    img_dir.mkdir(parents=True, exist_ok=True)
+
+    for page_num, page in enumerate(doc, 1):
+        # Even in scanned PDFs, some pages might have selectable text
+        # (e.g. a digitally-created TOC page). Use that text directly.
+        text = page.get_text("text").strip()
+        if text:
+            lines.append(f"\n## Page {page_num}\n")
+            lines.append(text)
+            continue
+
+        # Render page as image for OCR
+        pix = page.get_pixmap(dpi=200)
+        img_path = img_dir / f"page{page_num}.png"
+        pix.save(str(img_path))
+        # Use a special marker that the pipeline will recognize as needing OCR
+        lines.append(f"\n## Page {page_num}\n")
+        lines.append(f"\n![ocr]({img_path.resolve()})\n")
+
+    return ExtractionResult(
+        markdown="\n".join(lines),
+        formulas=[],
+        is_scanned=True,
+    )
+
+
+def _extract_text_pdf(
+    doc: pymupdf.Document, img_dir: Path, temp_dir: Path, file_path: Path
+) -> ExtractionResult:
+    """Extract a text-based PDF (the original logic)."""
     # First pass: detect formula regions across all pages
     formula_regions = detect_pdf_formulas(doc)
     # Render formula regions as images
@@ -29,7 +104,7 @@ def extract_pdf(file_path: Path, temp_dir: Path) -> ExtractionResult:
         text = page.get_text("text").strip()
 
         if not text:
-            # Scanned page — render as image for AI OCR
+            # Scanned page in an otherwise text-based PDF — render as image
             pix = page.get_pixmap(dpi=150)
             img_path = img_dir / f"page{page_num}.png"
             pix.save(str(img_path))
@@ -59,7 +134,6 @@ def extract_pdf(file_path: Path, temp_dir: Path) -> ExtractionResult:
             lines.append(f"\n![image]({img_path.resolve()})\n")
             img_count += 1
 
-    doc.close()
     return ExtractionResult(
         markdown="\n".join(lines),
         formulas=formula_regions,

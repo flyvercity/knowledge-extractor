@@ -45,6 +45,23 @@ def _clean_omml(xml_str: str) -> str:
     etree.cleanup_namespaces(root)
     return etree.tostring(root, encoding="unicode")
 
+OCR_PROMPT = """Extract ALL text from this scanned document page as clean Markdown.
+
+Rules:
+- Output the text exactly as it appears on the page
+- Preserve paragraph structure with blank lines between paragraphs
+- Preserve headings, bullet points, and numbered lists using markdown formatting
+- Preserve tables using markdown table syntax
+- Mathematical formulas: convert to LaTeX notation. Inline formulas wrap with $...$, display/block formulas wrap with $$...$$
+- Diagrams, flowcharts, or architecture figures: convert to Mermaid syntax in a ```mermaid code block
+- Charts or graphs: describe the data, axes, and trends in a "Figure:" paragraph
+- Photos or screenshots: describe briefly in a "Figure:" paragraph
+- Logos or decorative elements: skip entirely
+- Do NOT add any commentary or explanations — only the extracted content
+- If the page is blank or contains no readable text, respond with "BLANK_PAGE"
+
+Output the extracted content in clean Markdown:"""
+
 IMAGE_PROMPT = """Analyze this image from a technical document.
 - If it's a diagram, flowchart, or architecture: convert to Mermaid syntax in a ```mermaid code block.
 - If it's a chart or graph: describe the data, axes, and trends.
@@ -108,6 +125,30 @@ class AIClient:
         self.total_prompt_tokens = 0
         self.total_completion_tokens = 0
         self.total_cost = 0.0
+
+    def ocr_page(self, image_path: Path) -> str | None:
+        """OCR a scanned page image, extracting text content."""
+        if not self.client:
+            return None
+        data = base64.b64encode(image_path.read_bytes()).decode()
+        ext = image_path.suffix.lower().lstrip(".")
+        mime = {"jpg": "image/jpeg", "jpeg": "image/jpeg", "png": "image/png",
+                "gif": "image/gif", "bmp": "image/bmp", "tiff": "image/tiff"}.get(ext, "image/png")
+
+        try:
+            response = self._call([
+                {"role": "user", "content": [
+                    {"type": "text", "text": OCR_PROMPT},
+                    {"type": "image_url", "image_url": {"url": f"data:{mime};base64,{data}"}},
+                ]}
+            ])
+        except AIBadRequestError as e:
+            log.warning(f"AI: OCR failed for {image_path.name} — unprocessable: {e}")
+            return None
+
+        if response and response.strip().upper() == "BLANK_PAGE":
+            return ""
+        return response
 
     def describe_image(self, image_path: Path, context: str = "") -> str | None:
         if not self.client:
