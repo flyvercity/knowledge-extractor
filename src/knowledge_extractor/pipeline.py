@@ -94,7 +94,7 @@ def process_file(file: DiscoveredFile, args, tracker: ProgressTracker, logger: l
     log.info(f"  AI images: {time.time() - t0:.2f}s ({img_count} images done)")
 
     # 5. AI cleanup (skip for scanned PDFs — OCR output is already clean text,
-    #    and the cleanup truncates to 10k chars which destroys large documents)
+    #    and the cleanup step is unnecessary for already-OCR'd content)
     t0 = time.time()
     pre_cleanup_len = len(final_md)
     if extraction.is_scanned:

@@ -238,23 +238,25 @@ class AIClient:
 
         return response
 
-    def cleanup_content(self, markdown: str) -> str | None:
+    def cleanup_content(self, markdown: str, chunk_size: int = 10000) -> str | None:
         if not self.client:
             return None
         if len(markdown.strip()) < 100:
             return markdown
 
-        prompt = CLEANUP_PROMPT.format(content=markdown[:10000])
-        try:
-            response = self._call([
-                {"role": "user", "content": prompt}
-            ])
-        except AIBadRequestError as e:
-            log.warning(f"AI: content cleanup failed — unprocessable: {e}")
-            return None
-        return response
+        # Small documents: single pass
+        if len(markdown) <= chunk_size:
+            prompt = CLEANUP_PROMPT.format(content=markdown)
+            try:
+                response = self._call([
+                    {"role": "user", "content": prompt}
+                ])
+            except AIBadRequestError as e:
+                log.warning(f"AI: content cleanup failed — unprocessable: {e}")
+                return None
+            return response
 
-        # Split on section boundaries (## headers) to preserve structure
+        # Large documents: split on section boundaries to preserve structure
         chunks = self._split_into_chunks(markdown, chunk_size)
         log.info(f"    AI cleanup: {len(markdown)} chars split into {len(chunks)} chunks")
 
@@ -263,9 +265,14 @@ class AIClient:
         for i, chunk in enumerate(chunks):
             log.info(f"    AI cleanup chunk {i + 1}/{len(chunks)}: {len(chunk)} chars...")
             t_chunk = time.time()
-            cleaned = self._call([
-                {"role": "user", "content": CLEANUP_PROMPT.format(content=chunk)}
-            ])
+            try:
+                cleaned = self._call([
+                    {"role": "user", "content": CLEANUP_PROMPT.format(content=chunk)}
+                ])
+            except AIBadRequestError as e:
+                log.warning(f"AI: cleanup chunk {i + 1} failed — unprocessable: {e}")
+                cleaned_parts.append(chunk)
+                continue
             elapsed_chunk = time.time() - t_chunk
             log.info(f"    AI cleanup chunk {i + 1}/{len(chunks)}: done in {elapsed_chunk:.1f}s, {len(cleaned)} chars returned")
             cleaned_parts.append(cleaned)
@@ -273,8 +280,6 @@ class AIClient:
         total_elapsed = time.time() - t_start
         total_chars = sum(len(p) for p in cleaned_parts)
         log.info(f"    AI cleanup: all {len(chunks)} chunks done in {total_elapsed:.1f}s, {total_chars} chars total")
-
-        return "\n\n".join(cleaned_parts)
 
         return "\n\n".join(cleaned_parts)
 
