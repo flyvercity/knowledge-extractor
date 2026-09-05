@@ -40,7 +40,7 @@ uv run python main.py --input ./input --output ./output --temp ./temp --model go
 
 ## Features
 
-- **Incremental processing** — tracks completed files in `temp/progress.json`, skips on re-run
+- **Incremental processing** — tracks completed files in `output/.progress.json`, skips on re-run
 - **Intermediate results** — per-file markdown with original image references saved to temp dir
 - **AI image analysis** — converts diagrams to Mermaid, charts to descriptions (requires API key)
 - **OCR for scanned PDFs** — auto-detects scanned/image-only PDFs and extracts text via AI vision OCR (requires API key)

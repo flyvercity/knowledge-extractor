@@ -133,7 +133,7 @@ def _run(args):
     for fmt, items in sorted(by_type.items()):
         log.info(f"  {fmt}: {len(items)} files")
 
-    tracker = ProgressTracker(args.temp / "progress.json")
+    tracker = ProgressTracker(args.output / ".progress.json")
     pending = tracker.get_pending(files)
     log.info(f"Pending: {len(pending)} files ({len(files) - len(pending)} already processed)")
 

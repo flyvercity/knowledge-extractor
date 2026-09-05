@@ -131,7 +131,7 @@ Extensive processing logging to both console and a log file:
 
 **Implementation guidance:**
 - Create `tracker.py` with a `ProgressTracker` class
-- Stores state in a JSON file (`progress.json`) in the temp directory
+- Stores state in a JSON file (`.progress.json`) in the output directory, so the temp directory stays ephemeral and can be cleared without losing resume state
 - Methods: `is_processed(file_path) -> bool`, `mark_processed(file_path, output_path)`, `get_pending(discovered_files) -> list`
 - Include file modification time in tracking so changed files get re-processed
 
