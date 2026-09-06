@@ -31,6 +31,7 @@ uv run python main.py --input ./input --output ./output --temp ./temp --model go
 | `--output` | `./output` | Output directory for final Markdown files |
 | `--temp` | `./temp` | Intermediate data directory (debug artifacts) |
 | `--model` | `google/gemini-2.5-flash` | OpenRouter vision model for image analysis |
+| `--dry-run` | `false` | List which files would be processed and which would be skipped, then exit without processing |
 
 ### Environment Variables
 
@@ -40,7 +41,7 @@ uv run python main.py --input ./input --output ./output --temp ./temp --model go
 
 ## Features
 
-- **Incremental processing** — tracks completed files in `output/.progress.json`, skips on re-run
+- **Incremental processing** — skips a source file if its output Markdown already exists; delete the output file (or the output dir) to re-run
 - **Intermediate results** — per-file markdown with original image references saved to temp dir
 - **AI image analysis** — converts diagrams to Mermaid, charts to descriptions (requires API key)
 - **OCR for scanned PDFs** — auto-detects scanned/image-only PDFs and extracts text via AI vision OCR (requires API key)

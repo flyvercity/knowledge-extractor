@@ -4,7 +4,6 @@ import logging
 from pathlib import Path
 
 from .discovery import DiscoveredFile
-from .tracker import ProgressTracker
 from .filters import filter_content
 from .ai import AIClient
 from .linter import lint_file, LintResult
@@ -43,7 +42,7 @@ def get_ai_client() -> AIClient | None:
     return _ai_client
 
 
-def process_file(file: DiscoveredFile, args, tracker: ProgressTracker, logger: logging.Logger) -> LintResult:
+def process_file(file: DiscoveredFile, args, logger: logging.Logger) -> LintResult:
     start = time.time()
 
     # 1. Extract
@@ -118,8 +117,7 @@ def process_file(file: DiscoveredFile, args, tracker: ProgressTracker, logger: l
     mode = " [fast]" if lint_result.fast_mode else ""
     log.info(f"  Lint: {time.time() - t0:.2f}s ({lint_result.fixed_count} fixed, {len(lint_result.remaining_failures)} remaining){mode}")
 
-    # 8. Track
-    tracker.mark_processed(file, out_path)
+    # 8. Done
     elapsed = time.time() - start
     log.info(f"  Total: {elapsed:.1f}s")
 

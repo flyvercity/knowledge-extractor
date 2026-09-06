@@ -7,7 +7,6 @@ from dotenv import load_dotenv
 
 from .logging_setup import setup_logging
 from .discovery import discover_files
-from .tracker import ProgressTracker
 from .pipeline import process_file, get_ai_client
 from .linter import lint_file, LintResult
 from .index import generate_index
@@ -25,6 +24,7 @@ def main():
     parser.add_argument("--output", type=Path, default=Path("./output"), help="Output directory")
     parser.add_argument("--temp", type=Path, default=Path("./temp"), help="Intermediate data directory")
     parser.add_argument("--model", default="mistralai/mistral-small-2603", help="OpenRouter model")
+    parser.add_argument("--dry-run", action="store_true", help="List which files would be processed and skipped, then exit")
 
     # Clear subcommand
     clear_parser = sub.add_parser("clear", help="Remove temp directory (or all with --all)")
@@ -133,9 +133,22 @@ def _run(args):
     for fmt, items in sorted(by_type.items()):
         log.info(f"  {fmt}: {len(items)} files")
 
-    tracker = ProgressTracker(args.output / ".progress.json")
-    pending = tracker.get_pending(files)
+    def output_path(f):
+        return args.output / f.relative_path.with_suffix(".md")
+
+    pending = [f for f in files if not output_path(f).exists()]
     log.info(f"Pending: {len(pending)} files ({len(files) - len(pending)} already processed)")
+
+    if getattr(args, "dry_run", False):
+        skipped = [f for f in files if output_path(f).exists()]
+        log.info("Dry run — no files will be processed")
+        log.info(f"Would process ({len(pending)}):")
+        for f in pending:
+            log.info(f"  + {f.relative_path}")
+        log.info(f"Would skip ({len(skipped)}, output exists):")
+        for f in skipped:
+            log.info(f"  - {f.relative_path}")
+        return
 
     start = time.time()
     processed = failed = 0
@@ -144,7 +157,7 @@ def _run(args):
     for i, file in enumerate(pending, 1):
         log.info(f"[{i}/{len(pending)}] Processing: {file.relative_path}")
         try:
-            lint_result = process_file(file, args, tracker, log)
+            lint_result = process_file(file, args, log)
             processed += 1
             if lint_result:
                 total_lint_fixes += lint_result.fixed_count
