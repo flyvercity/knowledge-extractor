@@ -114,6 +114,30 @@ Document:
 {content}"""
 
 
+TRANSLATE_PROMPT = """Translate this Markdown document from {source_language} into English.
+
+Rules:
+- Translate ALL natural-language text into English: prose, headings, table cell text,
+  list items, and "Figure:" image descriptions.
+- Preserve the Markdown structure exactly: heading levels, list markers, table layout,
+  blank lines, and link/URL targets.
+- Do NOT translate or alter fenced code blocks (```...```) other than human-language
+  comments; leave code, identifiers, and syntax intact.
+- LaTeX math: keep the delimiters ($...$ and $$...$$) and the mathematical expressions
+  exactly as-is. Do not translate variable names or commands.
+- URLs and link targets must remain unchanged (you may translate visible link text).
+- Mermaid diagrams (```mermaid blocks): translate ONLY the human-readable label text that
+  appears inside brackets or quotes. Never modify node identifiers, arrows, or structural
+  keywords. Keywords such as `graph`, `flowchart`, `subgraph`, `end`, and edges like
+  `-->`, `---`, `-.->` must stay verbatim.
+  Example: `A[Angemeldet]` becomes `A[Logged in]` — the node id `A` and the brackets stay,
+  only the label text is translated. `graph LR` stays `graph LR`.
+- Output ONLY the translated Markdown, with no commentary, preamble, or explanation.
+
+Document:
+{content}"""
+
+
 class AIClient:
     def __init__(self, model: str):
         api_key = os.environ.get("OPENROUTER_API_KEY", "")
@@ -283,6 +307,74 @@ class AIClient:
 
         return "\n\n".join(cleaned_parts)
 
+    def translate_content(
+        self, markdown: str, source_language: str, chunk_size: int = 50000
+    ) -> str | None:
+        """Translate assembled Markdown from source_language into English.
+
+        Mirrors cleanup_content: returns None if no client; single-pass under the
+        threshold; otherwise chunked via _split_into_chunks. Both AIBadRequestError
+        and AIProviderError are caught per chunk so a transient/provider error never
+        crashes the document — the original chunk text is retained and a warning logged.
+        """
+        if not self.client:
+            return None
+        if len(markdown.strip()) < 100:
+            return markdown
+
+        # Small documents: single pass
+        if len(markdown) <= chunk_size:
+            prompt = TRANSLATE_PROMPT.format(
+                source_language=source_language, content=markdown
+            )
+            try:
+                response = self._call([{"role": "user", "content": prompt}])
+            except (AIBadRequestError, AIProviderError) as e:
+                log.warning(f"AI: translation failed — {e}")
+                return None
+            return response
+
+        # Large documents: split on section boundaries to preserve structure
+        chunks = self._split_into_chunks(markdown, chunk_size)
+        log.info(
+            f"    AI translate: {len(markdown)} chars split into {len(chunks)} chunks"
+        )
+
+        translated_parts = []
+        t_start = time.time()
+        for i, chunk in enumerate(chunks):
+            log.info(
+                f"    AI translate chunk {i + 1}/{len(chunks)}: {len(chunk)} chars..."
+            )
+            t_chunk = time.time()
+            try:
+                translated = self._call([
+                    {"role": "user", "content": TRANSLATE_PROMPT.format(
+                        source_language=source_language, content=chunk
+                    )}
+                ])
+            except (AIBadRequestError, AIProviderError) as e:
+                log.warning(
+                    f"AI: translation chunk {i + 1} failed — {e}; keeping original text"
+                )
+                translated_parts.append(chunk)
+                continue
+            elapsed_chunk = time.time() - t_chunk
+            log.info(
+                f"    AI translate chunk {i + 1}/{len(chunks)}: done in "
+                f"{elapsed_chunk:.1f}s, {len(translated)} chars returned"
+            )
+            translated_parts.append(translated)
+
+        total_elapsed = time.time() - t_start
+        total_chars = sum(len(p) for p in translated_parts)
+        log.info(
+            f"    AI translate: all {len(chunks)} chunks done in {total_elapsed:.1f}s, "
+            f"{total_chars} chars total"
+        )
+
+        return "\n\n".join(translated_parts)
+
     @staticmethod
     def _split_into_chunks(text: str, max_size: int) -> list[str]:
         """Split markdown into chunks at section boundaries (## headers)."""
@@ -307,15 +399,28 @@ class AIClient:
             if len(chunk) <= max_size:
                 final_chunks.append(chunk)
             else:
-                # Split oversized chunk at paragraph boundaries
+                # Split oversized chunk at paragraph boundaries, but never split inside
+                # a fenced code block (``` ... ```) — that would corrupt code/mermaid.
                 lines = chunk.split("\n")
                 part = ""
+                in_fence = False
                 for line in lines:
-                    if len(part) + len(line) + 1 > max_size and part:
+                    is_fence_delim = line.lstrip().startswith("```")
+                    # Only break at a boundary when we are NOT inside a code fence and
+                    # the current line is not itself a fence delimiter (so an opening or
+                    # closing ``` stays attached to its block).
+                    if (
+                        not in_fence
+                        and not is_fence_delim
+                        and len(part) + len(line) + 1 > max_size
+                        and part
+                    ):
                         final_chunks.append(part)
                         part = line + "\n"
                     else:
                         part += line + "\n"
+                    if is_fence_delim:
+                        in_fence = not in_fence
                 if part:
                     final_chunks.append(part)
 
@@ -325,7 +430,7 @@ class AIClient:
         """Log a summary of total AI usage and cost."""
         total_tokens = self.total_prompt_tokens + self.total_completion_tokens
         log.info(
-            f"AI usage: {self.calls} calls, "
+            f"AI usage [{self.model}]: {self.calls} calls, "
             f"{total_tokens:,} tokens ({self.total_prompt_tokens:,} prompt + "
             f"{self.total_completion_tokens:,} completion), "
             f"cost: ${self.total_cost:.4f}"

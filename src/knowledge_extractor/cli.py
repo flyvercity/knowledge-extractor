@@ -7,12 +7,28 @@ from dotenv import load_dotenv
 
 from .logging_setup import setup_logging
 from .discovery import discover_files
-from .pipeline import process_file, get_ai_client
+from .pipeline import process_file, get_ai_client, get_ai_clients
 from .linter import lint_file, LintResult
 from .index import generate_index
 from .ai import AIProviderError, AIBadRequestError
 
 load_dotenv()
+
+
+def _sanitize_translate_from(value: str) -> str | None:
+    """Sanitize the --translate-from value before it is formatted into an LLM prompt.
+
+    Strips surrounding whitespace and rejects newlines/control characters to avoid
+    prompt-injection via the flag value (spec finding P3). Returns the cleaned string,
+    or None if the value is empty/invalid after sanitization.
+    """
+    if value is None:
+        return None
+    # Reject any control characters, including newlines/tabs/carriage returns.
+    if any(ord(ch) < 32 or ord(ch) == 127 for ch in value):
+        return None
+    cleaned = value.strip()
+    return cleaned or None
 
 
 def main():
@@ -24,6 +40,8 @@ def main():
     parser.add_argument("--output", type=Path, default=Path("./output"), help="Output directory")
     parser.add_argument("--temp", type=Path, default=Path("./temp"), help="Intermediate data directory")
     parser.add_argument("--model", default="mistralai/mistral-small-2603", help="OpenRouter model")
+    parser.add_argument("--translate-from", default=None, help="Translate output into English from this source language (e.g. German, de). If unset, no translation.")
+    parser.add_argument("--translate-model", default="mistralai/mistral-large-2512", help="Model used for translation (falls back to --model if unset)")
     parser.add_argument("--dry-run", action="store_true", help="List which files would be processed and skipped, then exit")
 
     # Clear subcommand
@@ -48,6 +66,12 @@ def main():
 
     if not args.input:
         parser.error("--input is required")
+
+    if getattr(args, "translate_from", None) is not None:
+        sanitized = _sanitize_translate_from(args.translate_from)
+        if sanitized is None:
+            parser.error("--translate-from must be a non-empty string without newlines or control characters")
+        args.translate_from = sanitized
 
     _run(args)
 
@@ -124,6 +148,9 @@ def _run(args):
     log.info(f"Output: {args.output.resolve()}")
     log.info(f"Temp: {args.temp.resolve()}")
     log.info(f"Model: {args.model}")
+    if getattr(args, "translate_from", None):
+        translate_model = args.translate_model or args.model
+        log.info(f"Translate: from {args.translate_from} to English (model: {translate_model})")
 
     files = discover_files(args.input)
     log.info(f"Discovered {len(files)} supported files")
@@ -138,6 +165,14 @@ def _run(args):
 
     pending = [f for f in files if not output_path(f).exists()]
     log.info(f"Pending: {len(pending)} files ({len(files) - len(pending)} already processed)")
+
+    skipped_count = len(files) - len(pending)
+    if getattr(args, "translate_from", None) and skipped_count > 0 and not getattr(args, "dry_run", False):
+        log.warning(
+            f"--translate-from is set but {skipped_count} file(s) will be skipped because their "
+            f"output already exists; existing outputs are NOT re-translated. Delete the output "
+            f"file(s)/dir or run 'clear' to translate them."
+        )
 
     if getattr(args, "dry_run", False):
         skipped = [f for f in files if output_path(f).exists()]
@@ -173,10 +208,10 @@ def _run(args):
 
     generate_index(args.output, args.input, log)
 
-    # Log AI usage summary
-    ai_client = get_ai_client()
-    if ai_client and ai_client.calls > 0:
-        ai_client.log_usage_summary()
+    # Log AI usage summary (one per distinct model, e.g. main + translation)
+    for ai_client in get_ai_clients():
+        if ai_client and ai_client.calls > 0:
+            ai_client.log_usage_summary()
 
     # Log lint summary
     if total_lint_fixes > 0 or total_lint_remaining > 0:

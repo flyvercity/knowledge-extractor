@@ -17,7 +17,8 @@ AI cleanup and before writing/linting. Translation always targets English.
 - Translation runs as a dedicated final pass on the assembled `final_md`, after AI cleanup
   (step 5) and before write (step 6).
 - Configurable translation model via a new `--translate-model` flag. Default:
-  `google/gemini-2.5-flash` (text-only task; cheap, fast, multilingual). Falls back to
+  `mistralai/mistral-large-2512` (a strong text-only, multilingual instruction-follower well
+  suited to preserving Markdown/LaTeX/Mermaid structure while translating). Falls back to
   `--model` if `--translate-model` is not provided. A separate `AIClient` instance handles
   translation.
 - Translate all natural-language content, including `Figure:` descriptions and natural-language
@@ -64,8 +65,8 @@ AI cleanup and before writing/linting. Translation always targets English.
   splitter should also avoid breaking inside a fenced code block (` ``` `) when it must split an
   oversized section (finding E4).
 - Translation is text-only (input is assembled Markdown, no images), so the default model should
-  be a text model rather than the vision `--model`. `google/gemini-2.5-flash` is the README's
-  documented default and is multilingual.
+  be a text model rather than the vision `--model`. `mistralai/mistral-large-2512` is a strong
+  multilingual, instruction-following text model, chosen for reliable structure preservation.
 - The end-of-run AI usage summary is emitted from `cli.py::_run` via `get_ai_client()` and
   `ai_client.log_usage_summary()`. With clients cached by model, the summary should aggregate
   usage across all instantiated clients (or log each once) so the translation model's usage is
@@ -152,7 +153,7 @@ flowchart LR
 - **Objective:** Expose the feature on the command line.
 - **Implementation guidance:**
   - In `cli.py`, add to the run arguments: `--translate-from` (default `None`) and
-    `--translate-model` (default `"google/gemini-2.5-flash"`).
+    `--translate-model` (default `"mistralai/mistral-large-2512"`).
   - Sanitize `--translate-from` before it reaches the prompt (finding P3): strip surrounding
     whitespace and reject/strip newlines and control characters; on an empty-after-sanitize or
     invalid value, `parser.error(...)`. This prevents prompt-injection via the flag value.

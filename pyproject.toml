@@ -21,3 +21,9 @@ knowledge-extractor = "knowledge_extractor.cli:main"
 
 [tool.uv]
 package = true
+
+[dependency-groups]
+dev = ["pytest"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

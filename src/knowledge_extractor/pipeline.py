@@ -27,19 +27,28 @@ EXTRACTORS = {
 FORMULA_PLACEHOLDER = "[FORMULA: conversion failed]"
 FORMULA_NO_API_PLACEHOLDER = "[FORMULA: no API key]"
 
-_ai_client: AIClient | None = None
+_ai_clients: dict[str, AIClient] = {}
 
 
 def _get_ai(model: str) -> AIClient:
-    global _ai_client
-    if _ai_client is None:
-        _ai_client = AIClient(model)
-    return _ai_client
+    client = _ai_clients.get(model)
+    if client is None:
+        client = AIClient(model)
+        _ai_clients[model] = client
+    return client
 
 
 def get_ai_client() -> AIClient | None:
-    """Return the AI client instance (for usage summary), or None if not initialized."""
-    return _ai_client
+    """Return the primary AI client instance (for usage summary), or None if not initialized.
+
+    Kept for backward compatibility; returns the first cached client.
+    """
+    return next(iter(_ai_clients.values()), None)
+
+
+def get_ai_clients() -> list[AIClient]:
+    """Return all cached AI client instances (one per distinct model)."""
+    return list(_ai_clients.values())
 
 
 def process_file(file: DiscoveredFile, args, logger: logging.Logger) -> LintResult:
@@ -105,6 +114,24 @@ def process_file(file: DiscoveredFile, args, logger: logging.Logger) -> LintResu
             log.info(f"  AI cleanup: {time.time() - t0:.2f}s ({pre_cleanup_len} → {len(final_md)} chars, {len(final_md) - pre_cleanup_len:+d})")
         else:
             log.info(f"  AI cleanup: {time.time() - t0:.2f}s (no change, AI unavailable or skipped)")
+
+    # 5b. AI translation (optional) — translate assembled markdown into English
+    translate_from = getattr(args, "translate_from", None)
+    if translate_from:
+        t0 = time.time()
+        translate_model = getattr(args, "translate_model", None) or args.model
+        translate_ai = _get_ai(translate_model)
+        pre_translate_len = len(final_md)
+        translated = translate_ai.translate_content(final_md, translate_from)
+        if translated:
+            final_md = translated
+            log.info(
+                f"  AI translate: {time.time() - t0:.2f}s ({pre_translate_len} → "
+                f"{len(final_md)} chars, {len(final_md) - pre_translate_len:+d}) "
+                f"[{translate_from} → English]"
+            )
+        else:
+            log.info(f"  AI translate: skipped (AI unavailable or content too short)")
 
     # 6. Write final output
     out_path = args.output / file.relative_path.with_suffix(".md")
