@@ -39,7 +39,7 @@ def main():
     parser.add_argument("--input", type=Path, help="Input directory")
     parser.add_argument("--output", type=Path, default=Path("./output"), help="Output directory")
     parser.add_argument("--temp", type=Path, default=Path("./temp"), help="Intermediate data directory")
-    parser.add_argument("--model", default="mistralai/mistral-small-2603", help="OpenRouter model")
+    parser.add_argument("--model", default="openai/gpt-6-luna", help="OpenRouter model")
     parser.add_argument("--translate-from", default=None, help="Translate output into English from this source language (e.g. German, de). If unset, no translation.")
     parser.add_argument("--translate-model", default="mistralai/mistral-large-2512", help="Model used for translation (falls back to --model if unset)")
     parser.add_argument("--dry-run", action="store_true", help="List which files would be processed and skipped, then exit")
