@@ -5,6 +5,7 @@ description = "Extract agent-accessible knowledge from document file trees"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "click",
     "openrouter",
     "python-docx",
     "python-pptx",
