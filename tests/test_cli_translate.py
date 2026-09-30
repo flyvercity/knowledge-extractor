@@ -51,7 +51,7 @@ def _run_cli(monkeypatch, argv):
 
 
 def test_default_command_when_no_subcommand(monkeypatch):
-    """Invoking with --input and no subcommand runs the default `run` command."""
+    """Invoking with --input and no subcommand runs the default `convert` command."""
     result, args = _run_cli(monkeypatch, ["--input", "in"])
     assert result.exit_code == 0
     assert args is not None
@@ -59,7 +59,7 @@ def test_default_command_when_no_subcommand(monkeypatch):
 
 
 def test_defaults_when_flags_absent(monkeypatch):
-    result, args = _run_cli(monkeypatch, ["run", "--input", "in"])
+    result, args = _run_cli(monkeypatch, ["convert", "--input", "in"])
     assert result.exit_code == 0
     assert args.translate_from is None
     assert args.translate_model == "mistralai/mistral-large-2512"
@@ -68,7 +68,7 @@ def test_defaults_when_flags_absent(monkeypatch):
 def test_flags_parse(monkeypatch):
     result, args = _run_cli(
         monkeypatch,
-        ["run", "--input", "in", "--translate-from", "German", "--translate-model", "x/y"],
+        ["convert", "--input", "in", "--translate-from", "German", "--translate-model", "x/y"],
     )
     assert result.exit_code == 0
     assert args.translate_from == "German"
@@ -78,10 +78,22 @@ def test_flags_parse(monkeypatch):
 def test_translate_from_sanitized(monkeypatch):
     """Whitespace around --translate-from is stripped before reaching the pipeline."""
     result, args = _run_cli(
-        monkeypatch, ["run", "--input", "in", "--translate-from", "  German  "]
+        monkeypatch, ["convert", "--input", "in", "--translate-from", "  German  "]
     )
     assert result.exit_code == 0
     assert args.translate_from == "German"
+
+
+def test_convert_command_entrypoint(monkeypatch):
+    """The `convert` command can be invoked directly (as the `convert` script does)."""
+    from click.testing import CliRunner
+    import knowledge_extractor.cli as cli
+
+    captured = {}
+    monkeypatch.setattr(cli, "_run", lambda args: captured.setdefault("args", args))
+    result = CliRunner().invoke(cli.convert, ["--input", "in"], catch_exceptions=False)
+    assert result.exit_code == 0
+    assert str(captured["args"].input) == "in"
 
 
 def test_translate_from_rejects_control_chars(monkeypatch):
@@ -91,18 +103,18 @@ def test_translate_from_rejects_control_chars(monkeypatch):
 
     monkeypatch.setattr(cli, "_run", lambda args: None)
     result = CliRunner().invoke(
-        cli.cli, ["run", "--input", "in", "--translate-from", "German\nInjected"]
+        cli.cli, ["convert", "--input", "in", "--translate-from", "German\nInjected"]
     )
     assert result.exit_code != 0
     assert "translate-from" in result.output
 
 
 def test_input_required(monkeypatch):
-    """The run command requires --input."""
+    """The convert command requires --input."""
     from click.testing import CliRunner
     import knowledge_extractor.cli as cli
 
     monkeypatch.setattr(cli, "_run", lambda args: None)
-    result = CliRunner().invoke(cli.cli, ["run"])
+    result = CliRunner().invoke(cli.cli, ["convert"])
     assert result.exit_code != 0
     assert "input" in result.output.lower()

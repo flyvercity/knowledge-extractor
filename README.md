@@ -20,8 +20,15 @@ cp .env.example .env  # add your OpenRouter API key
 ## Usage
 
 ```bash
-uv run python main.py --input ./input --output ./output --temp ./temp --model google/gemini-2.5-flash
+# Using the `convert` script (recommended)
+uv run convert --input ./input --output ./output --temp ./temp --model google/gemini-2.5-flash
+
+# Equivalent forms via the command group
+uv run knowledge-extractor convert --input ./input --output ./output
+uv run python main.py --input ./input --output ./output   # subcommand optional; defaults to `convert`
 ```
+
+Other subcommands: `convert` (extract, the default), `clear` (remove temp/output dirs), `lint` (re-lint markdown).
 
 ### Parameters
 

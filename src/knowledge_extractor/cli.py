@@ -63,7 +63,7 @@ class _DefaultGroup(click.Group):
 
 @click.group(
     cls=_DefaultGroup,
-    default_command="run",
+    default_command="convert",
     context_settings={"help_option_names": ["-h", "--help"]},
     invoke_without_command=False,
 )
@@ -88,7 +88,7 @@ def cli():
     help="Model used for translation (falls back to --model if unset)",
 )
 @click.option("--dry-run", is_flag=True, help="List which files would be processed and skipped, then exit")
-def run(input_, output, temp, model, translate_from, translate_model, dry_run):
+def convert(input_, output, temp, model, translate_from, translate_model, dry_run):
     """Extract knowledge from the input directory (default command)."""
     if translate_from is not None:
         sanitized = _sanitize_translate_from(translate_from)
@@ -131,6 +131,15 @@ def lint(directory):
 
 def main():
     cli()
+
+
+def convert_main():
+    """Entry point for the ``convert`` script: run the extraction command directly.
+
+    Enables ``uv run convert <options>`` (e.g. ``uv run convert --input ./in``)
+    without needing to type the subcommand.
+    """
+    convert()
 
 
 def _clear(args):
