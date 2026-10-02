@@ -16,7 +16,7 @@ def _is_hidden(path: Path, output_dir: Path) -> bool:
     return any(part.startswith(".") for part in rel.parts[:-1])
 
 
-def generate_index(output_dir: Path, input_dir: Path = None, logger: logging.Logger = None) -> tuple[int, int]:
+def generate_index(output_dir: Path, input_dir: Path | None = None, logger: logging.Logger | None = None) -> tuple[int, int]:
     """Regenerate the root ``index.md`` and ``manifest.json`` for ``output_dir``.
 
     ``input_dir`` is **deprecated and ignored** — it is retained only for positional
@@ -36,7 +36,7 @@ def generate_index(output_dir: Path, input_dir: Path = None, logger: logging.Log
     md_files = [
         f
         for f in sorted(output_dir.rglob("*.md"))
-        if f.name != "index.md" and not _is_hidden(f, output_dir)
+        if f.name != "index.md" and f.is_file() and not _is_hidden(f, output_dir)
     ]
 
     if not md_files:
@@ -65,7 +65,7 @@ def generate_index(output_dir: Path, input_dir: Path = None, logger: logging.Log
         })
 
     # Markdown index
-    lines = [f"# Knowledge Index\n", f"**{len(md_files)} documents extracted**\n"]
+    lines = ["# Knowledge Index\n", f"**{len(md_files)} documents extracted**\n"]
     for group, entries in sorted(groups.items()):
         lines.append(f"\n## {group}\n")
         for rel_path, title in entries:
@@ -122,7 +122,7 @@ def _is_generated_manifest(path: Path) -> bool:
     )
 
 
-def cleanup_nested_artifacts(output_dir: Path, logger: logging.Logger = None) -> int:
+def cleanup_nested_artifacts(output_dir: Path, logger: logging.Logger | None = None) -> int:
     """Delete VERIFIED generated ``index.md`` / ``manifest.json`` in SUBDIRECTORIES.
 
     The root-level pair is left untouched (it is regenerated afterward). A nested file is

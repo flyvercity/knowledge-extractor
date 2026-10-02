@@ -220,7 +220,7 @@ def _lint(args):
 
 def _reindex(args):
     output = args.output.resolve()
-    if not output.exists():
+    if not output.is_dir():
         click.echo(f"Directory not found: {output}")
         sys.exit(1)
 
