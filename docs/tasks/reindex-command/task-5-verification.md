@@ -1,6 +1,6 @@
 # Task 5 — Full verification pass
 
-Status: [ ]
+Status: [x]
 
 Source spec: `docs/specs/reindex-command.md`
 

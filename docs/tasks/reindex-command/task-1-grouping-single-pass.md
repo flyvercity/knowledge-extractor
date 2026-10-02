@@ -1,6 +1,6 @@
 # Task 1 — Full-parent-path grouping + single-pass read in `generate_index`
 
-Status: [ ]
+Status: [x]
 
 Source spec: `docs/specs/reindex-command.md`
 Target file: `src/knowledge_extractor/index.py`

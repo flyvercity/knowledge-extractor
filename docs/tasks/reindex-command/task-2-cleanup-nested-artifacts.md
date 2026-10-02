@@ -1,6 +1,6 @@
 # Task 2 — Content-verified `cleanup_nested_artifacts` helper
 
-Status: [ ]
+Status: [x]
 
 Source spec: `docs/specs/reindex-command.md`
 Target file: `src/knowledge_extractor/index.py`

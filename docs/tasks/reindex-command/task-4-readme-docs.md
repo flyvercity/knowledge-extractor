@@ -1,6 +1,6 @@
 # Task 4 — README documentation
 
-Status: [ ]
+Status: [x]
 
 Source spec: `docs/specs/reindex-command.md`
 Target file: `README.md`

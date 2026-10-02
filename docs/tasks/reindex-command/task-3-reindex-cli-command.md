@@ -1,6 +1,6 @@
 # Task 3 — `reindex` CLI command
 
-Status: [ ]
+Status: [x]
 
 Source spec: `docs/specs/reindex-command.md`
 Target file: `src/knowledge_extractor/cli.py`

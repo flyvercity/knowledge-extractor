@@ -11,7 +11,7 @@ from .logging_setup import setup_logging
 from .discovery import discover_files
 from .pipeline import process_file, get_ai_client, get_ai_clients
 from .linter import lint_file, LintResult
-from .index import generate_index
+from .index import generate_index, cleanup_nested_artifacts
 from .ai import AIProviderError, AIBadRequestError
 
 load_dotenv()
@@ -129,6 +129,21 @@ def lint(directory):
     _lint(args)
 
 
+@cli.command()
+@click.option("--output", type=click.Path(path_type=Path), default=Path("./output"),
+              show_default=True, help="Output directory (vault) to reindex")
+@click.option("--keep-nested", is_flag=True,
+              help="Keep nested index.md/manifest.json in subdirectories (default: remove generated ones)")
+def reindex(output, keep_nested):
+    """Rebuild the root index.md/manifest.json covering all subdirectories.
+
+    Useful after joining multiple vaults into one output directory. Pure
+    regeneration — no extraction, no AI, no linting.
+    """
+    args = SimpleNamespace(output=output, keep_nested=keep_nested)
+    _reindex(args)
+
+
 def main():
     cli()
 
@@ -201,6 +216,28 @@ def _lint(args):
 
     elapsed = time.time() - start
     click.echo(f"\nDone in {elapsed:.1f}s — {total_fixed} fixes applied across {files_with_fixes} files, {total_remaining} unfixed issues remaining")
+
+
+def _reindex(args):
+    output = args.output.resolve()
+    if not output.exists():
+        click.echo(f"Directory not found: {output}")
+        sys.exit(1)
+
+    log = setup_logging(args.output)
+    log.info(f"Reindexing: {output}")
+
+    if not args.keep_nested:
+        removed = cleanup_nested_artifacts(args.output, log)
+        if removed:
+            click.echo(f"Removed {removed} nested index/manifest file(s)")
+
+    doc_count, group_count = generate_index(args.output, None, log)
+    if doc_count:
+        click.echo(f"Reindexed {output} "
+                   f"({doc_count} document(s) across {group_count} group(s))")
+    else:
+        click.echo(f"Nothing to index in {output}")
 
 
 def _run(args):
