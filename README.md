@@ -32,8 +32,8 @@ Other subcommands: `convert` (extract, the default), `clear` (remove temp/output
 
 ```bash
 # Rebuild a single root index/manifest across all subfolders (e.g. after joining vaults)
-uv run knowledge-extractor reindex --output ./output
-uv run knowledge-extractor reindex --output ./output --keep-nested
+uv run knowledge-extractor reindex ./output
+uv run knowledge-extractor reindex ./output --keep-nested
 ```
 
 ### Parameters
@@ -80,11 +80,11 @@ several output directories into one combined directory, then run `reindex` to pr
 unified index/manifest covering every subfolder.
 
 ```bash
-uv run knowledge-extractor reindex --output ./output
-uv run knowledge-extractor reindex --output ./output --keep-nested
+uv run knowledge-extractor reindex ./output
+uv run knowledge-extractor reindex ./output --keep-nested
 ```
 
-- `--output` defaults to `./output`.
+- The output directory is a required positional argument (consistent with `lint`).
 - By default, `reindex` removes nested `index.md`/`manifest.json` files found in
   **subdirectories**, but **only** when they are verified extractor-generated artifacts
   (a nested `index.md` must start with `# Knowledge Index`; a nested `manifest.json` must

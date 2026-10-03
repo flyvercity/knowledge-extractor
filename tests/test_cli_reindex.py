@@ -27,7 +27,7 @@ def test_reindex_happy_path(tmp_path):
     _write(tmp_path / "VaultA" / "index.md", GENERATED_INDEX)
     _write(tmp_path / "VaultA" / "manifest.json", GENERATED_MANIFEST)
 
-    result = CliRunner().invoke(cli.cli, ["reindex", "--output", str(tmp_path)], catch_exceptions=False)
+    result = CliRunner().invoke(cli.cli, ["reindex", str(tmp_path)], catch_exceptions=False)
     assert result.exit_code == 0
 
     assert (tmp_path / "index.md").exists()
@@ -46,7 +46,7 @@ def test_reindex_preserves_user_content(tmp_path):
     _write(tmp_path / "root.md", "# Root Doc\nhello")
     user_index = _write(tmp_path / "VaultA" / "index.md", "# My Project Notes\n\ncontent")
 
-    result = CliRunner().invoke(cli.cli, ["reindex", "--output", str(tmp_path)], catch_exceptions=False)
+    result = CliRunner().invoke(cli.cli, ["reindex", str(tmp_path)], catch_exceptions=False)
     assert result.exit_code == 0
     assert user_index.exists()
 
@@ -57,7 +57,7 @@ def test_reindex_keep_nested_preserves_artifacts(tmp_path):
     nested_manifest = _write(tmp_path / "VaultA" / "manifest.json", GENERATED_MANIFEST)
 
     result = CliRunner().invoke(
-        cli.cli, ["reindex", "--output", str(tmp_path), "--keep-nested"], catch_exceptions=False
+        cli.cli, ["reindex", str(tmp_path), "--keep-nested"], catch_exceptions=False
     )
     assert result.exit_code == 0
     assert nested_index.exists()
@@ -66,13 +66,13 @@ def test_reindex_keep_nested_preserves_artifacts(tmp_path):
 
 def test_reindex_missing_dir_nonzero_exit(tmp_path):
     missing = tmp_path / "does_not_exist"
-    result = CliRunner().invoke(cli.cli, ["reindex", "--output", str(missing)])
+    result = CliRunner().invoke(cli.cli, ["reindex", str(missing)])
     assert result.exit_code != 0
     assert "Directory not found" in result.output
 
 
 def test_reindex_empty_dir(tmp_path):
-    result = CliRunner().invoke(cli.cli, ["reindex", "--output", str(tmp_path)], catch_exceptions=False)
+    result = CliRunner().invoke(cli.cli, ["reindex", str(tmp_path)], catch_exceptions=False)
     assert result.exit_code == 0
     assert not (tmp_path / "manifest.json").exists()
     assert "Nothing to index" in result.output

@@ -17,11 +17,11 @@ and no modification of document content.
 
 - A new `reindex` subcommand is added to the existing Click command group in
   `cli.py` (alongside `convert`, `clear`, `lint`).
-- **Signature**: `reindex --output <dir>` where `--output` defaults to `./output`
-  (`show_default=True`), matching the `convert`/`clear` option style. A `--keep-nested`
-  boolean flag (default off) is also accepted.
+- **Signature**: `reindex <directory>` where `directory` is a **required positional
+  argument** (consistent with the `lint` command, which also operates on an existing
+  directory). A `--keep-nested` boolean flag (default off) is also accepted.
 - The command regenerates a single `index.md` and `manifest.json` at the **root** of
-  `--output`, covering every `*.md` file found recursively under it.
+  `<directory>`, covering every `*.md` file found recursively under it.
 - **Grouping**: documents are grouped by their **full relative parent path** joined with
   forward slashes (`/`). A file at `VaultA/doc.md` → group `VaultA`; a file at
   `VaultA/sub/doc.md` → group `VaultA/sub`. A file directly in the output root → group

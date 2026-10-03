@@ -130,17 +130,16 @@ def lint(directory):
 
 
 @cli.command()
-@click.option("--output", type=click.Path(path_type=Path), default=Path("./output"),
-              show_default=True, help="Output directory (vault) to reindex")
+@click.argument("directory", type=click.Path(path_type=Path))
 @click.option("--keep-nested", is_flag=True,
               help="Keep nested index.md/manifest.json in subdirectories (default: remove generated ones)")
-def reindex(output, keep_nested):
+def reindex(directory, keep_nested):
     """Rebuild the root index.md/manifest.json covering all subdirectories.
 
     Useful after joining multiple vaults into one output directory. Pure
     regeneration — no extraction, no AI, no linting.
     """
-    args = SimpleNamespace(output=output, keep_nested=keep_nested)
+    args = SimpleNamespace(directory=directory, keep_nested=keep_nested)
     _reindex(args)
 
 
@@ -219,25 +218,25 @@ def _lint(args):
 
 
 def _reindex(args):
-    output = args.output.resolve()
-    if not output.is_dir():
-        click.echo(f"Directory not found: {output}")
+    directory = args.directory.resolve()
+    if not directory.is_dir():
+        click.echo(f"Directory not found: {directory}")
         sys.exit(1)
 
-    log = setup_logging(args.output)
-    log.info(f"Reindexing: {output}")
+    log = setup_logging(directory)
+    log.info(f"Reindexing: {directory}")
 
     if not args.keep_nested:
-        removed = cleanup_nested_artifacts(args.output, log)
+        removed = cleanup_nested_artifacts(directory, log)
         if removed:
             click.echo(f"Removed {removed} nested index/manifest file(s)")
 
-    doc_count, group_count = generate_index(args.output, None, log)
+    doc_count, group_count = generate_index(directory, None, log)
     if doc_count:
-        click.echo(f"Reindexed {output} "
+        click.echo(f"Reindexed {directory} "
                    f"({doc_count} document(s) across {group_count} group(s))")
     else:
-        click.echo(f"Nothing to index in {output}")
+        click.echo(f"Nothing to index in {directory}")
 
 
 def _run(args):
