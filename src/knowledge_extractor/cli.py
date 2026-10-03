@@ -1,18 +1,23 @@
-import argparse
 import shutil
 import sys
 import time
 from pathlib import Path
+from types import SimpleNamespace
+
+import click
 from dotenv import load_dotenv
 
 from .logging_setup import setup_logging
 from .discovery import discover_files
 from .pipeline import process_file, get_ai_client, get_ai_clients
 from .linter import lint_file, LintResult
-from .index import generate_index
+from .index import generate_index, cleanup_nested_artifacts
 from .ai import AIProviderError, AIBadRequestError
 
 load_dotenv()
+
+DEFAULT_MODEL = "openai/gpt-6-luna"
+DEFAULT_TRANSLATE_MODEL = "mistralai/mistral-large-2512"
 
 
 def _sanitize_translate_from(value: str) -> str | None:
@@ -31,49 +36,124 @@ def _sanitize_translate_from(value: str) -> str | None:
     return cleaned or None
 
 
-def main():
-    parser = argparse.ArgumentParser(description="Extract knowledge from document file trees")
-    sub = parser.add_subparsers(dest="command")
+class _DefaultGroup(click.Group):
+    """A Group that falls back to a default subcommand.
 
-    # Default run command (no subcommand needed)
-    parser.add_argument("--input", type=Path, help="Input directory")
-    parser.add_argument("--output", type=Path, default=Path("./output"), help="Output directory")
-    parser.add_argument("--temp", type=Path, default=Path("./temp"), help="Intermediate data directory")
-    parser.add_argument("--model", default="openai/gpt-6-luna", help="OpenRouter model")
-    parser.add_argument("--translate-from", default=None, help="Translate output into English from this source language (e.g. German, de). If unset, no translation.")
-    parser.add_argument("--translate-model", default="mistralai/mistral-large-2512", help="Model used for translation (falls back to --model if unset)")
-    parser.add_argument("--dry-run", action="store_true", help="List which files would be processed and skipped, then exit")
+    Preserves the historical UX where invoking the tool with no subcommand
+    (e.g. ``main.py --input ./in``) runs the extraction pipeline. If the first
+    argument is not a known subcommand or a group-level help flag, the
+    ``default_command`` is invoked with the original arguments.
+    """
 
-    # Clear subcommand
-    clear_parser = sub.add_parser("clear", help="Remove temp directory (or all with --all)")
-    clear_parser.add_argument("--output", type=Path, default=Path("./output"), help="Output directory")
-    clear_parser.add_argument("--temp", type=Path, default=Path("./temp"), help="Intermediate data directory")
-    clear_parser.add_argument("--all", action="store_true", help="Also remove output directory")
+    def __init__(self, *args, default_command=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.default_command = default_command
 
-    # Lint subcommand
-    lint_parser = sub.add_parser("lint", help="Re-lint all markdown files in a directory")
-    lint_parser.add_argument("directory", type=Path, help="Directory containing markdown files to lint")
+    def parse_args(self, ctx, args):
+        if self.default_command and args:
+            first = args[0]
+            is_known_command = first in self.commands
+            is_group_help = first in ("-h", "--help")
+            # Anything that isn't a known subcommand or the group help flag is
+            # forwarded to the default command (e.g. `--input ./in`).
+            if not is_known_command and not is_group_help:
+                args = [self.default_command, *args]
+        return super().parse_args(ctx, args)
 
-    args = parser.parse_args()
 
-    if args.command == "clear":
-        _clear(args)
-        return
+@click.group(
+    cls=_DefaultGroup,
+    default_command="convert",
+    context_settings={"help_option_names": ["-h", "--help"]},
+    invoke_without_command=False,
+)
+def cli():
+    """Extract knowledge from document file trees."""
 
-    if args.command == "lint":
-        _lint(args)
-        return
 
-    if not args.input:
-        parser.error("--input is required")
-
-    if getattr(args, "translate_from", None) is not None:
-        sanitized = _sanitize_translate_from(args.translate_from)
+@cli.command()
+@click.option("--input", "input_", type=click.Path(path_type=Path), required=True, help="Input directory")
+@click.option("--output", type=click.Path(path_type=Path), default=Path("./output"), show_default=True, help="Output directory")
+@click.option("--temp", type=click.Path(path_type=Path), default=Path("./temp"), show_default=True, help="Intermediate data directory")
+@click.option("--model", default=DEFAULT_MODEL, show_default=True, help="OpenRouter model")
+@click.option(
+    "--translate-from",
+    default=None,
+    help="Translate output into English from this source language (e.g. German, de). If unset, no translation.",
+)
+@click.option(
+    "--translate-model",
+    default=DEFAULT_TRANSLATE_MODEL,
+    show_default=True,
+    help="Model used for translation (falls back to --model if unset)",
+)
+@click.option("--dry-run", is_flag=True, help="List which files would be processed and skipped, then exit")
+def convert(input_, output, temp, model, translate_from, translate_model, dry_run):
+    """Extract knowledge from the input directory (default command)."""
+    if translate_from is not None:
+        sanitized = _sanitize_translate_from(translate_from)
         if sanitized is None:
-            parser.error("--translate-from must be a non-empty string without newlines or control characters")
-        args.translate_from = sanitized
+            raise click.BadParameter(
+                "must be a non-empty string without newlines or control characters",
+                param_hint="--translate-from",
+            )
+        translate_from = sanitized
 
+    args = SimpleNamespace(
+        input=input_,
+        output=output,
+        temp=temp,
+        model=model,
+        translate_from=translate_from,
+        translate_model=translate_model,
+        dry_run=dry_run,
+    )
     _run(args)
+
+
+@cli.command()
+@click.option("--output", type=click.Path(path_type=Path), default=Path("./output"), show_default=True, help="Output directory")
+@click.option("--temp", type=click.Path(path_type=Path), default=Path("./temp"), show_default=True, help="Intermediate data directory")
+@click.option("--all", "all_", is_flag=True, help="Also remove output directory")
+def clear(output, temp, all_):
+    """Remove temp directory (or all with --all)."""
+    args = SimpleNamespace(output=output, temp=temp, all=all_)
+    _clear(args)
+
+
+@cli.command()
+@click.argument("directory", type=click.Path(path_type=Path))
+def lint(directory):
+    """Re-lint all markdown files in a directory."""
+    args = SimpleNamespace(directory=directory)
+    _lint(args)
+
+
+@cli.command()
+@click.argument("directory", type=click.Path(path_type=Path))
+@click.option("--keep-nested", is_flag=True,
+              help="Keep nested index.md/manifest.json in subdirectories (default: remove generated ones)")
+def reindex(directory, keep_nested):
+    """Rebuild the root index.md/manifest.json covering all subdirectories.
+
+    Useful after joining multiple vaults into one output directory. Pure
+    regeneration — no extraction, no AI, no linting.
+    """
+    args = SimpleNamespace(directory=directory, keep_nested=keep_nested)
+    _reindex(args)
+
+
+def main():
+    cli()
+
+
+def convert_main():
+    """Entry point for the ``convert`` script: run the extraction command directly.
+
+    Enables ``uv run convert <options>`` (e.g. ``uv run convert --input ./in``)
+    without needing to type the subcommand.
+    """
+    convert()
 
 
 def _clear(args):
@@ -83,37 +163,36 @@ def _clear(args):
 
     existing = [(p, name) for p, name in dirs if p.exists()]
     if not existing:
-        print("Nothing to clear.")
+        click.echo("Nothing to clear.")
         return
 
-    print("This will remove:")
+    click.echo("This will remove:")
     for p, name in existing:
-        print(f"  {p.resolve()}")
-    answer = input("Proceed? [y/N] ").strip().lower()
-    if answer != "y":
-        print("Cancelled.")
+        click.echo(f"  {p.resolve()}")
+    if not click.confirm("Proceed?", default=False):
+        click.echo("Cancelled.")
         return
     for p, _ in existing:
         shutil.rmtree(p, ignore_errors=True)
         if p.exists():
-            print(f"  Partially removed {p} (some files locked)")
+            click.echo(f"  Partially removed {p} (some files locked)")
         else:
-            print(f"  Removed {p}")
+            click.echo(f"  Removed {p}")
 
 
 def _lint(args):
     """Re-lint all markdown files in the given directory."""
     directory = args.directory.resolve()
     if not directory.exists():
-        print(f"Directory not found: {directory}")
+        click.echo(f"Directory not found: {directory}")
         sys.exit(1)
 
     files = sorted(directory.rglob("*.md"))
     if not files:
-        print(f"No markdown files found in {directory}")
+        click.echo(f"No markdown files found in {directory}")
         return
 
-    print(f"Linting {len(files)} markdown files in {directory}")
+    click.echo(f"Linting {len(files)} markdown files in {directory}")
     start = time.time()
     total_fixed = 0
     total_remaining = 0
@@ -121,21 +200,43 @@ def _lint(args):
 
     for i, f in enumerate(files, 1):
         rel = f.relative_to(directory)
-        print(f"  [{i}/{len(files)}] {rel} ... ", end="", flush=True)
+        click.echo(f"  [{i}/{len(files)}] {rel} ... ", nl=False)
         t0 = time.time()
         result = lint_file(f)
         elapsed_file = time.time() - t0
         mode = " [fast]" if result.fast_mode else ""
         if result.fixed_count > 0:
             files_with_fixes += 1
-            print(f"{result.fixed_count} fixed, {len(result.remaining_failures)} remaining ({elapsed_file:.1f}s){mode}")
+            click.echo(f"{result.fixed_count} fixed, {len(result.remaining_failures)} remaining ({elapsed_file:.1f}s){mode}")
         else:
-            print(f"clean ({elapsed_file:.1f}s){mode}")
+            click.echo(f"clean ({elapsed_file:.1f}s){mode}")
         total_fixed += result.fixed_count
         total_remaining += len(result.remaining_failures)
 
     elapsed = time.time() - start
-    print(f"\nDone in {elapsed:.1f}s — {total_fixed} fixes applied across {files_with_fixes} files, {total_remaining} unfixed issues remaining")
+    click.echo(f"\nDone in {elapsed:.1f}s — {total_fixed} fixes applied across {files_with_fixes} files, {total_remaining} unfixed issues remaining")
+
+
+def _reindex(args):
+    directory = args.directory.resolve()
+    if not directory.is_dir():
+        click.echo(f"Directory not found: {directory}")
+        sys.exit(1)
+
+    log = setup_logging(directory)
+    log.info(f"Reindexing: {directory}")
+
+    if not args.keep_nested:
+        removed = cleanup_nested_artifacts(directory, log)
+        if removed:
+            click.echo(f"Removed {removed} nested index/manifest file(s)")
+
+    doc_count, group_count = generate_index(directory, None, log)
+    if doc_count:
+        click.echo(f"Reindexed {directory} "
+                   f"({doc_count} document(s) across {group_count} group(s))")
+    else:
+        click.echo(f"Nothing to index in {directory}")
 
 
 def _run(args):

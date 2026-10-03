@@ -20,7 +20,20 @@ cp .env.example .env  # add your OpenRouter API key
 ## Usage
 
 ```bash
-uv run python main.py --input ./input --output ./output --temp ./temp --model google/gemini-2.5-flash
+# Using the `convert` script (recommended)
+uv run convert --input ./input --output ./output --temp ./temp --model google/gemini-2.5-flash
+
+# Equivalent forms via the command group
+uv run knowledge-extractor convert --input ./input --output ./output
+uv run python main.py --input ./input --output ./output   # subcommand optional; defaults to `convert`
+```
+
+Other subcommands: `convert` (extract, the default), `clear` (remove temp/output dirs), `lint` (re-lint markdown), `reindex` (rebuild the root index/manifest across all subfolders).
+
+```bash
+# Rebuild a single root index/manifest across all subfolders (e.g. after joining vaults)
+uv run knowledge-extractor reindex ./output
+uv run knowledge-extractor reindex ./output --keep-nested
 ```
 
 ### Parameters
@@ -57,3 +70,31 @@ uv run python main.py --input ./input --output ./output --temp ./temp --model go
 
 - `output/index.md` — flat index grouped by original folder structure
 - `output/**/*.md` — one Markdown file per source document
+
+## Joining Vaults (`reindex`)
+
+The `reindex` command rebuilds a single root `index.md` + `manifest.json` for an output
+directory purely from the Markdown already on disk — no extraction, no AI, no linting.
+This is useful after **joining multiple vaults**: copy the per-document subfolders of
+several output directories into one combined directory, then run `reindex` to produce one
+unified index/manifest covering every subfolder.
+
+```bash
+uv run knowledge-extractor reindex ./output
+uv run knowledge-extractor reindex ./output --keep-nested
+```
+
+- The output directory is a required positional argument (consistent with `lint`).
+- By default, `reindex` removes nested `index.md`/`manifest.json` files found in
+  **subdirectories**, but **only** when they are verified extractor-generated artifacts
+  (a nested `index.md` must start with `# Knowledge Index`; a nested `manifest.json` must
+  be a JSON array of entries carrying `path`/`title`/`group`). User-content `index.md`
+  files (e.g. Obsidian folder notes, Hugo/Docusaurus/MkDocs index pages) are **preserved**
+  and logged. The root-level pair is always regenerated.
+- `--keep-nested` opts out of removal entirely, leaving all nested artifacts in place.
+- Files inside hidden directories (any path component starting with `.`, e.g. `.git`,
+  `.obsidian`) are neither indexed nor removed.
+- **Avoiding collisions**: place each joined vault under a **distinct parent folder**
+  inside the combined directory (e.g. `combined/VaultA/`, `combined/VaultB/`). Documents
+  with identical relative paths would otherwise silently overwrite each other on the
+  filesystem before `reindex` runs.
