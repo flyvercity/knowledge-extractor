@@ -1,0 +1,170 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:1cb2334895bba37845951f99c6d23ae8f50b3e6cd4aaceca8d248dbc468f2afe",
+  "claims": [
+    {
+      "id": "claim_17434f5611794afd8fb52c070589e7ff",
+      "statement": "The CLI is a Click group configured with a custom _DefaultGroup class and default_command='convert', so invoking the tool with no subcommand runs the extraction pipeline as long as the first argument is not a known subcommand or a help flag.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/cli.py",
+          "version": "repo-file-v1:sha256:023b430cb7f0d3bdd3168403b5e89d093e4afd384609ba423ddcfdd9b65a33c9"
+        }
+      ]
+    },
+    {
+      "id": "claim_ccb3cf6782154fb38408693c08c84cc3",
+      "statement": "The CLI ships two installable entry points: knowledge-extractor (mapping to knowledge_extractor.cli:main) and convert (mapping to knowledge_extractor.cli:convert_main), both defined in pyproject.toml.",
+      "evidence": [
+        {
+          "resource": "repo://pyproject.toml",
+          "version": "repo-file-v1:sha256:5f696ab44087c98eb111698160248fdd5bfee26da2fb575ed467326c2558ffae"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/cli.py",
+          "version": "repo-file-v1:sha256:023b430cb7f0d3bdd3168403b5e89d093e4afd384609ba423ddcfdd9b65a33c9"
+        }
+      ]
+    },
+    {
+      "id": "claim_76f07a9e5446403ebee30fd5e3c3f017",
+      "statement": "The convert command accepts --input (required), --output (default ./output), --temp (default ./temp), --model (default openai/gpt-6-luna), --translate-from (unset), --translate-model (default mistralai/mistral-large-2512), and --dry-run (flag).",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/cli.py",
+          "version": "repo-file-v1:sha256:023b430cb7f0d3bdd3168403b5e89d093e4afd384609ba423ddcfdd9b65a33c9"
+        }
+      ]
+    },
+    {
+      "id": "claim_a7b68cc4abd44ebebcabd24ea33cd520",
+      "statement": "The --translate-from value is sanitized before use: control characters and newlines cause a click.BadParameter error, preventing prompt injection via the flag value.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/cli.py",
+          "version": "repo-file-v1:sha256:023b430cb7f0d3bdd3168403b5e89d093e4afd384609ba423ddcfdd9b65a33c9"
+        }
+      ]
+    },
+    {
+      "id": "claim_93601a9bacfe44a4bae497364e2cf4bf",
+      "statement": "The clear command removes the temp directory by default and optionally the output directory with --all; it lists directories to remove, prompts for confirmation (default no), and uses shutil.rmtree with ignore_errors=True.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/cli.py",
+          "version": "repo-file-v1:sha256:023b430cb7f0d3bdd3168403b5e89d093e4afd384609ba423ddcfdd9b65a33c9"
+        }
+      ]
+    },
+    {
+      "id": "claim_98dc93c34dca43be9dc9c697fc6bb180",
+      "statement": "The lint command re-lints all markdown files in a given directory (required positional argument), using pymarkdownlnt for files at or below 512 KB and a fast regex-based fixer for larger files.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/cli.py",
+          "version": "repo-file-v1:sha256:023b430cb7f0d3bdd3168403b5e89d093e4afd384609ba423ddcfdd9b65a33c9"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/linter.py",
+          "version": "repo-file-v1:sha256:f7e88a53cc82a1ba5f1ce542acda3a959839c50aa4cc14153a009d0a5de8134d"
+        }
+      ]
+    },
+    {
+      "id": "claim_c8556dc14b664c468a6e0091cb706ef2",
+      "statement": "The reindex command rebuilds a single root index.md and manifest.json from Markdown already on disk, with no extraction, AI, or linting; by default it removes verified generated nested artifacts but preserves user-content index.md files and skips hidden directories.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/cli.py",
+          "version": "repo-file-v1:sha256:023b430cb7f0d3bdd3168403b5e89d093e4afd384609ba423ddcfdd9b65a33c9"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/index.py",
+          "version": "repo-file-v1:sha256:8dab9fcd724bd87b073ef0f6485e2e7ef519bc9552767edb1241fdfcb878c284"
+        }
+      ]
+    },
+    {
+      "id": "claim_e10c1201417843528619966eab6127dc",
+      "statement": "The convert command implements incremental processing: it skips source files whose output Markdown already exists, and when --translate-from is set and files are skipped, a warning is logged that existing outputs are not re-translated.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/cli.py",
+          "version": "repo-file-v1:sha256:023b430cb7f0d3bdd3168403b5e89d093e4afd384609ba423ddcfdd9b65a33c9"
+        }
+      ]
+    },
+    {
+      "id": "claim_9df8c8fdc30a4cd39c3248841579eb2e",
+      "statement": "The --translate-from flag triggers a final translation pass after cleanup and before linting, using --translate-model (falling back to --model), preserving code blocks, LaTeX, tables, URLs, and Mermaid structure, and requiring an API key.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/cli.py",
+          "version": "repo-file-v1:sha256:023b430cb7f0d3bdd3168403b5e89d093e4afd384609ba423ddcfdd9b65a33c9"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/pipeline.py",
+          "version": "repo-file-v1:sha256:66e97c36ccfbe88717875f928cd2c2c0670ef20df4374d7661d8508ae3d56424"
+        }
+      ]
+    },
+    {
+      "id": "claim_f0c316536da3457eaf8ee247330e9ced",
+      "statement": "In dry-run mode, the pipeline logs which files would be processed and which would be skipped, then exits without processing.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/cli.py",
+          "version": "repo-file-v1:sha256:023b430cb7f0d3bdd3168403b5e89d093e4afd384609ba423ddcfdd9b65a33c9"
+        }
+      ]
+    },
+    {
+      "id": "claim_fe5f1510b6884efca6492d71cb51e7f1",
+      "statement": "Each pending file goes through a staged pipeline: extract, formulas (LaTeX conversion), OCR (for scanned PDFs), heuristic filter, AI image analysis, AI cleanup (skipped for scanned PDFs), optional AI translation, write final output, and markdown lint.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/pipeline.py",
+          "version": "repo-file-v1:sha256:66e97c36ccfbe88717875f928cd2c2c0670ef20df4374d7661d8508ae3d56424"
+        }
+      ]
+    },
+    {
+      "id": "claim_3842e4cee07747e89b25e6fd50fb1cdd",
+      "statement": "If an AIProviderError is raised during processing, the pipeline logs the error and aborts; other exceptions are caught per-file and logged, with the failed count included in the final summary and a non-zero exit code if any failures occurred.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/cli.py",
+          "version": "repo-file-v1:sha256:023b430cb7f0d3bdd3168403b5e89d093e4afd384609ba423ddcfdd9b65a33c9"
+        }
+      ]
+    },
+    {
+      "id": "claim_9f6f674765c0405f845274b38a417dd5",
+      "statement": "File discovery walks the input tree with rglob, skips .git directories, and only yields files whose lowercased suffix is in the SUPPORTED set: .docx, .pptx, .xlsx, .pdf, .jpg, .jpeg, .png.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/discovery.py",
+          "version": "repo-file-v1:sha256:39bc3a056c637b058f8f73dc3f3bb128ea1b666a9f598f8195fe0787d469bed8"
+        }
+      ]
+    },
+    {
+      "id": "claim_93926736e2934f5bbdda5870168aa055",
+      "statement": "After processing all files, generate_index rebuilds the root index.md (grouped by original folder structure) and manifest.json (JSON array with path, title, group, headings, and word_count), and logs AI usage summary per distinct model and a lint summary.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/cli.py",
+          "version": "repo-file-v1:sha256:023b430cb7f0d3bdd3168403b5e89d093e4afd384609ba423ddcfdd9b65a33c9"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/index.py",
+          "version": "repo-file-v1:sha256:8dab9fcd724bd87b073ef0f6485e2e7ef519bc9552767edb1241fdfcb878c284"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.6.1",
+    "at": "2026-10-03T09:19:39.759Z"
+  }
+}

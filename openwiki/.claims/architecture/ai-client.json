@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:11ec0367ed3dcd8dd8f1727214e53f6972c58f265b2b0c592b812d5c769dbd59",
+  "claims": [
+    {
+      "id": "claim_18b2b07be7e446028762850e21335373",
+      "statement": "The AIClient is the central wrapper around OpenRouter that provides a unified interface for all AI-powered pipeline operations.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/ai.py",
+          "version": "repo-file-v1:sha256:796f62bfeeab9592b30b527642db9408161689760a976fddd486a99cc6d4fd9d"
+        }
+      ]
+    },
+    {
+      "id": "claim_101f61e11a95478a8ba8acf280c48f44",
+      "statement": "The AIClient distinguishes between retryable errors (network timeouts, rate limiting, HTTP 5xx) that are retried with exponential backoff, and non-retryable errors (authentication failures, invalid parameters, content policy violations) that fail fast.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/ai.py",
+          "version": "repo-file-v1:sha256:796f62bfeeab9592b30b527642db9408161689760a976fddd486a99cc6d4fd9d"
+        }
+      ]
+    },
+    {
+      "id": "claim_569cd2b59ae54d43adddfb2963cb94d5",
+      "statement": "The AIClient powers five optional AI steps: OCR for scanned content, image description generation, formula-to-LaTeX conversion, content cleanup/normalization, and optional translation.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/ai.py",
+          "version": "repo-file-v1:sha256:796f62bfeeab9592b30b527642db9408161689760a976fddd486a99cc6d4fd9d"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/pipeline.py",
+          "version": "repo-file-v1:sha256:66e97c36ccfbe88717875f928cd2c2c0670ef20df4374d7661d8508ae3d56424"
+        }
+      ]
+    },
+    {
+      "id": "claim_b0c6e01c65524ebfb26c4b85edac2bd8",
+      "statement": "The pipeline invokes the AIClient at specific post-extraction stages: after formula processing, OCR rendering, image analysis, cleanup, and optionally translation.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/pipeline.py",
+          "version": "repo-file-v1:sha256:66e97c36ccfbe88717875f928cd2c2c0670ef20df4374d7661d8508ae3d56424"
+        }
+      ]
+    },
+    {
+      "id": "claim_84c78edae93a46738b3656356febfb8b",
+      "statement": "AIClient configuration includes OpenRouter API key authentication, model selection for different tasks, and logging setup for diagnostic tracing.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/ai.py",
+          "version": "repo-file-v1:sha256:796f62bfeeab9592b30b527642db9408161689760a976fddd486a99cc6d4fd9d"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/logging_setup.py",
+          "version": "repo-file-v1:sha256:7c54f4c3140771a5630dd9b1e25a90b04dcb2bd99a7cefaa2d3856a4137b1c90"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.6.1",
+    "at": "2026-10-03T09:19:39.759Z"
+  }
+}

@@ -1,0 +1,156 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:53c72032f22d58010759688ccafc7785d14210df0c30953743b99a7fff554ec4",
+  "claims": [
+    {
+      "id": "claim_85e28200346a40919da7468219bf6102",
+      "statement": "The CLI is a Click group with convert/clear/lint/reindex commands and a default-command fallback so invocations without a subcommand still run convert when the first argument is not a known command or help flag.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/ai.py",
+          "version": "repo-file-v1:sha256:796f62bfeeab9592b30b527642db9408161689760a976fddd486a99cc6d4fd9d"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/cli.py",
+          "version": "repo-file-v1:sha256:023b430cb7f0d3bdd3168403b5e89d093e4afd384609ba423ddcfdd9b65a33c9"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/discovery.py",
+          "version": "repo-file-v1:sha256:39bc3a056c637b058f8f73dc3f3bb128ea1b666a9f598f8195fe0787d469bed8"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/extractors/docx_extractor.py",
+          "version": "repo-file-v1:sha256:525cdaaf9011d2957b91a11ef8029b5abda5b360b56fa16da5145f02859882c1"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/extractors/excel_extractor.py",
+          "version": "repo-file-v1:sha256:6893fd06dcd2338cad37c483bce512a47e7e5311c20eeca88f6e09bc751a48ba"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/extractors/image_extractor.py",
+          "version": "repo-file-v1:sha256:8efa6a89afa459cd4ecf7ac5300b5e04cb95f30eecd96c0df773797896635a96"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/extractors/pdf_extractor.py",
+          "version": "repo-file-v1:sha256:5677b8fc2305fd3d4e65a87864aa3b884a2c35c758dea6b6084a3112ad088f8c"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/extractors/pptx_extractor.py",
+          "version": "repo-file-v1:sha256:6d5a62675f3129e3e927632988729871409feb0252596192dce5811067b5b985"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/filters.py",
+          "version": "repo-file-v1:sha256:47402aa070e67690b3ffea2e3889f6328d28a62b45cb807a15d780358a588f95"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/formulas/__init__.py",
+          "version": "repo-file-v1:sha256:8900746d823dda14b07a86f32257aabe31edc38c0aeef453a50d5629dee72a96"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/index.py",
+          "version": "repo-file-v1:sha256:8dab9fcd724bd87b073ef0f6485e2e7ef519bc9552767edb1241fdfcb878c284"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/linter.py",
+          "version": "repo-file-v1:sha256:f7e88a53cc82a1ba5f1ce542acda3a959839c50aa4cc14153a009d0a5de8134d"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/pipeline.py",
+          "version": "repo-file-v1:sha256:66e97c36ccfbe88717875f928cd2c2c0670ef20df4374d7661d8508ae3d56424"
+        }
+      ]
+    },
+    {
+      "id": "claim_1079be095dd24ef6978e62779518a447",
+      "statement": "File discovery walks the input tree, skips .git path components, keeps only files whose suffixes are in SUPPORTED, and maps each to a format_type used for extractor selection.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/discovery.py",
+          "version": "repo-file-v1:sha256:39bc3a056c637b058f8f73dc3f3bb128ea1b666a9f598f8195fe0787d469bed8"
+        }
+      ]
+    },
+    {
+      "id": "claim_ffd81a2b757b410dae38e69db27d4360",
+      "statement": "Extractors return str or ExtractionResult; the pipeline normalizes str results into ExtractionResult and uses format_type to pick the extractor from a registry.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/formulas/__init__.py",
+          "version": "repo-file-v1:sha256:8900746d823dda14b07a86f32257aabe31edc38c0aeef453a50d5629dee72a96"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/pipeline.py",
+          "version": "repo-file-v1:sha256:66e97c36ccfbe88717875f928cd2c2c0670ef20df4374d7661d8508ae3d56424"
+        }
+      ]
+    },
+    {
+      "id": "claim_b480049fe79e45da8a3e23847b91dc54",
+      "statement": "Per-file processing runs in a defined order: extract, formula conversion, OCR before filtering, heuristic filtering, AI image analysis, optional AI cleanup, optional translation, write output, lint, and return LintResult.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/pipeline.py",
+          "version": "repo-file-v1:sha256:66e97c36ccfbe88717875f928cd2c2c0670ef20df4374d7661d8508ae3d56424"
+        }
+      ]
+    },
+    {
+      "id": "claim_81b3409b9bba46278220b1ab6bbf70e4",
+      "statement": "AI steps use a cached per-model AIClient and degrade gracefully: missing API key or transient errors skip individual steps, but a configured and unresponsive provider aborts processing.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/ai.py",
+          "version": "repo-file-v1:sha256:796f62bfeeab9592b30b527642db9408161689760a976fddd486a99cc6d4fd9d"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/pipeline.py",
+          "version": "repo-file-v1:sha256:66e97c36ccfbe88717875f928cd2c2c0670ef20df4374d7661d8508ae3d56424"
+        }
+      ]
+    },
+    {
+      "id": "claim_63ea68d34a8e45959ccbce09780baeba",
+      "statement": "AIClient exposes OCR, image description, formula-to-LaTeX conversion, content cleanup, and translation, with chunking for large documents and model-specific usage/cost tracking.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/ai.py",
+          "version": "repo-file-v1:sha256:796f62bfeeab9592b30b527642db9408161689760a976fddd486a99cc6d4fd9d"
+        }
+      ]
+    },
+    {
+      "id": "claim_050dd43d466549f8b2c649714a0d0796",
+      "statement": "Formula markers are replaced by index into detected FormulaRef/FormulaRegion lists, rendered as inline $...$ or block $$\n...\n$$, with distinct placeholders for no API key and conversion failure.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/pipeline.py",
+          "version": "repo-file-v1:sha256:66e97c36ccfbe88717875f928cd2c2c0670ef20df4374d7661d8508ae3d56424"
+        }
+      ]
+    },
+    {
+      "id": "claim_229ddd57bf664612a8510cff54fd081c",
+      "statement": "Index generation rebuilds root index.md and manifest.json from non-hidden output .md files, grouping by relative parent path and reusing each file once for title, headings, and word count.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/index.py",
+          "version": "repo-file-v1:sha256:8dab9fcd724bd87b073ef0f6485e2e7ef519bc9552767edb1241fdfcb878c284"
+        }
+      ]
+    },
+    {
+      "id": "claim_23e78c1261a742b191c04a9fc56f683e",
+      "statement": "cleanup_nested_artifacts removes only verified extractor-generated index/manifest files from subdirectories, preserves user content, and never touches hidden directories.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/index.py",
+          "version": "repo-file-v1:sha256:8dab9fcd724bd87b073ef0f6485e2e7ef519bc9552767edb1241fdfcb878c284"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.6.1",
+    "at": "2026-10-03T09:19:39.759Z"
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:21387262106eb2b2163e6b662c4cb15587efe14f046f5b948d09c7560bc214bb",
+  "claims": [
+    {
+      "id": "claim_9ed0cbb28f4146e2b7a91203482bc40e",
+      "statement": "generate_index rebuilds the root index.md and manifest.json purely from Markdown files already on disk, grouping documents by full relative parent path and treating root-level files as the Root group, with input_dir retained only as a deprecated compatibility parameter.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/index.py",
+          "version": "repo-file-v1:sha256:8dab9fcd724bd87b073ef0f6485e2e7ef519bc9552767edb1241fdfcb878c284"
+        }
+      ]
+    },
+    {
+      "id": "claim_0a6588d02a28485d893f490437f6cafa",
+      "statement": "reindex can remove nested index.md/manifest.json artifacts from subdirectories, but only when each file passes a content signature check (index.md starting with '# Knowledge Index' and manifest.json being a JSON array whose entries carry path/title/group); user-content index files are preserved, hidden directories are untouched, and the root pair is always regenerated.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/cli.py",
+          "version": "repo-file-v1:sha256:023b430cb7f0d3bdd3168403b5e89d093e4afd384609ba423ddcfdd9b65a33c9"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/index.py",
+          "version": "repo-file-v1:sha256:8dab9fcd724bd87b073ef0f6485e2e7ef519bc9552767edb1241fdfcb878c284"
+        }
+      ]
+    },
+    {
+      "id": "claim_121a0d5c79564368bbf072d08451efe1",
+      "statement": "The joining-vaults workflow combines per-document subfolders from multiple output directories into one combined directory and then runs reindex to produce a single unified index/manifest, with distinct parent folders per vault recommended to avoid silent filesystem path collisions before reindex runs.",
+      "evidence": [
+        {
+          "resource": "repo://README.md",
+          "version": "repo-file-v1:sha256:8898d7a70216facf1ab79b6890c1efd8c1fc57a8727d4d7e3477b98b8f9b5503"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/cli.py",
+          "version": "repo-file-v1:sha256:023b430cb7f0d3bdd3168403b5e89d093e4afd384609ba423ddcfdd9b65a33c9"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/index.py",
+          "version": "repo-file-v1:sha256:8dab9fcd724bd87b073ef0f6485e2e7ef519bc9552767edb1241fdfcb878c284"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.6.1",
+    "at": "2026-10-03T09:19:39.759Z"
+  }
+}

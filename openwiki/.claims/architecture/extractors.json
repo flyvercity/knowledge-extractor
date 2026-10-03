@@ -1,0 +1,148 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:c64de0ca2a263b9ff8bd85a3e7032a0833278656dcc0f6622102c459be319157",
+  "claims": [
+    {
+      "id": "claim_e65365f94242463a803b61f6efee5716",
+      "statement": "All document extractors share a common interface pattern: they accept file_path: Path and temp_dir: Path parameters, and produce markdown output with optional formula metadata. DOCX, PPTX, and PDF extractors return ExtractionResult (containing markdown, formulas list, and is_scanned flag), while XLSX and image extractors return plain markdown strings.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/extractors/docx_extractor.py#L13-L83",
+          "version": "repo-lines-v1:sha256:331e9534b48c114ce0a65af53b8886b9c33f432dc0cb4c13f57ccd55a54d119c:eyJzZWxlY3RlZExpbmVDb3VudCI6NzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYyYjFkMTdkODdmMWJlOTY5MjViMGRmOTc2ODQ2ODgwNWY0ZmY2Y2RkMzNlNGJmN2FiZjY0YzQ2MzU3NTkzMmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMwYzFmMTg4ZjE0MmVkN2E4MjQ2ODBiMjA3MTcyYzU1MTliYzYxNGE0OGZkYTdjZjE2N2VkYjhkZGY3OTk1NmMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZhN2FmNzNlMjUyOGQ0YTY4MjNmMDk1ZDY4Njk3NTFlZDg1MWViNTY2NmZjMWNiMDY2MmJkOWQ1YzBiZjdmOTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFiOGI0MWE4MTY3ZGZlZjA2NmE2OTQ1MGZiZjA4M2I3ODcxNjViZmE4NzcwZDI1OTA4YzZhNzNiZmZiMmFkZDYifQ"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/extractors/excel_extractor.py#L5-L28",
+          "version": "repo-lines-v1:sha256:fe5f5527ec0fa7e3b3bc3a4a3e275da65dc603520726205dab1cc3e38058c25c:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM5ODQzMWFjZDE5YzVkNGZkZDkxOWE1ZThlOGY1MTE5MDgyNTA0NDdhMTI4N2MyZGFhMmU3MzczZGNhNmFmZDciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEzZTdiYjMxNTZkZjFmNzcyOGY0NTMxOTM0NDlhYTc0NmQ3MWE1NDEzYTQ0M2FjZGVkMTZkYzcwNTI2Nzg0ODEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3M2Q2NTQzZDUxOTRiMmI1Y2Q5ODM1ZWIwOWRhYzlmNDdkYmM1OGYxN2VlYThjMzE5ZjM2NjM5N2UyYzMxY2IiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/extractors/image_extractor.py#L6-L10",
+          "version": "repo-lines-v1:sha256:2330a285764e13412cff92f28aee9e003aa761cae3cd9c5e537accb7fe0cfb2a:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDk2MjhlNDcwNGRkODdiMzhiM2JhOGY1MWE0MDYyYzU3ODY3MzI4NzE3OTU4ZTM2NGFiYTU4NmI4MGMyYzBjMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzMzZjliN2E2OWY2OTlmN2VmNGMxOWY1NDFjMTllMTI2ZDJhNTExNDUzYzJhZDYzOGYyZTZhN2EwNmYyOGRiOCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTRjN2IxZmFiYjY4YWM1NmU5M2UxYWZmNTVkMDZkOWFhMDUxODQyMDZkMGI4MjliOTIwZWNkOTBhZTllY2RiZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/extractors/pdf_extractor.py#L15-L47",
+          "version": "repo-lines-v1:sha256:816a6b2403cb56814e2bb2f1ca0f9fa5f1f8bce7fe13faff002aca3469270412:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZjMmNkNWJkY2UxYmE5ZDQxMWMxZWE5ZDhkMGIxMDRiODIxNWY1YTQwODA3YTdmMmUyMDRhNGI1YTlkYzJmOTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZhMTFjMDU2N2QwYTVmOWU5YjEzNWY2NWNkMjUzNzJkZmQ2Mjg3NzVmN2MxZWQyNTNmOGJhZDQyZGQyZDY2NjkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYxY2ZkNjY0OTVhMTVkMmQ4MDFlNzQzNjczMjcxOGQwYmE2NzIxZDlhNWJmNGFlNzZiZmFmZmE5N2Y4NGQ3N2MiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZmODViZWIwODdiY2JkMDgwNGExZTE2ZTI3Yjk4ZWNmOGFlOWZjNjU0OTk0OWE5ZWUwODA4Mzk0MzI4ZTY1OTUifQ"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/extractors/pptx_extractor.py#L13-L63",
+          "version": "repo-lines-v1:sha256:65359b30305ea1c77390e362bfa2216c15fb63bbbd9f1aa8d6ff8e0c9d907186:eyJzZWxlY3RlZExpbmVDb3VudCI6NTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA5YmEzYTMwMzEyYmJlNTljNjlmZmNiNDQ0ODUyMjYzZjE3ZWJmODE5Y2I1OGU0Y2Y5OGQ5MmMzMjQxZmQ0MmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMwYzFmMTg4ZjE0MmVkN2E4MjQ2ODBiMjA3MTcyYzU1MTliYzYxNGE0OGZkYTdjZjE2N2VkYjhkZGY3OTk1NmMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZhN2FmNzNlMjUyOGQ0YTY4MjNmMDk1ZDY4Njk3NTFlZDg1MWViNTY2NmZjMWNiMDY2MmJkOWQ1YzBiZjdmOTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRhY2VlN2I4NzI4YzQxNjA3YjA1Y2UxMmEyMmExYzFiNzM1ZDBlMWY4NGJjNWIxNzhjZDFkZjU5NTc5ZjM1MzkifQ"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/formulas/__init__.py#L37-L43",
+          "version": "repo-lines-v1:sha256:fb45f4221368dcdd65877de86bd42d7ab47569cd0f5326d491d7d48bee31c7c8:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjZmYmFlMGI5MWQ0NGZjMGQ0OWY1ZGU2OTFkYTZmYzQzMWYyNjAxMzRiZjczMWUwZTIxZjc2NDgwOTQzMzRjYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODA4ZTQ5Mjg3Yzg5NmQxMjIyNDdiZDI5MDg0MGY5ZTdlN2Q5MGE4YmFkNDA3MWMxOGI1ZmM1ZTA5ZjRhYjUzNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDRiMWM1NDhjMjI3NWE4ZmYxYzhjM2NkMDY2ZDBhMjI3MGRhZmU4OGZkMDA4YTJhZGE0YjYzZmVlZDViYjFlNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_ed80073dd430412bb1b4789607d65fb1",
+      "statement": "The DOCX extractor uses python-docx to parse Word documents, extracting images from document relationships (non-external only), converting tables to markdown with merged-cell deduplication, applying markdown heading syntax based on paragraph styles (Heading 1/2/3), and detecting OMML formulas by scanning for m:oMathPara and m:oMath elements.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/extractors/docx_extractor.py#L13-L83",
+          "version": "repo-lines-v1:sha256:331e9534b48c114ce0a65af53b8886b9c33f432dc0cb4c13f57ccd55a54d119c:eyJzZWxlY3RlZExpbmVDb3VudCI6NzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYyYjFkMTdkODdmMWJlOTY5MjViMGRmOTc2ODQ2ODgwNWY0ZmY2Y2RkMzNlNGJmN2FiZjY0YzQ2MzU3NTkzMmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMwYzFmMTg4ZjE0MmVkN2E4MjQ2ODBiMjA3MTcyYzU1MTliYzYxNGE0OGZkYTdjZjE2N2VkYjhkZGY3OTk1NmMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZhN2FmNzNlMjUyOGQ0YTY4MjNmMDk1ZDY4Njk3NTFlZDg1MWViNTY2NmZjMWNiMDY2MmJkOWQ1YzBiZjdmOTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFiOGI0MWE4MTY3ZGZlZjA2NmE2OTQ1MGZiZjA4M2I3ODcxNjViZmE4NzcwZDI1OTA4YzZhNzNiZmZiMmFkZDYifQ"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/extractors/docx_extractor.py#L160-L182",
+          "version": "repo-lines-v1:sha256:e9d7fd669e7f24255f32b80f0f5f8bc37ca94d8b4ec12ee1a5fc5bd1b8688521:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM2ODIzNDljNTNhMWRkZjU1YTlhNzU1NDNlMzBkMDBkY2VlOTA3MDc1Yzk1NWRhNjk1NmZiMjQ3YzA0NzFkMWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEzNTQwOWU2YTVjYWVhMGRlMGMzNGJmNGQ5YWIxYjg2ODBhNmVlMDRhZWEyZTU2OTc3ZWVjMDU2YWZjNGQ2OTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVjYzQ2MDdiY2ViZjJhZTE2YjUxNDQyNWRjZGI3ZjQ1ZGNkOWVlOWM1MTdjYzNkYjM3ZDA3YWM1ZTc4YTVkMWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b459d9e52f9648dd90810117dbead3e5",
+      "statement": "The PPTX extractor uses python-pptx to process presentations slide-by-slide with recursive shape iteration for grouped shapes, extracts images from Picture shapes using content-type-based extension mapping (png/jpg/gif/bmp/tiff), converts tables to markdown, detects OMML formulas in text frame elements with slide number context, and appends speaker notes as blockquote text.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/extractors/pptx_extractor.py#L13-L63",
+          "version": "repo-lines-v1:sha256:65359b30305ea1c77390e362bfa2216c15fb63bbbd9f1aa8d6ff8e0c9d907186:eyJzZWxlY3RlZExpbmVDb3VudCI6NTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA5YmEzYTMwMzEyYmJlNTljNjlmZmNiNDQ0ODUyMjYzZjE3ZWJmODE5Y2I1OGU0Y2Y5OGQ5MmMzMjQxZmQ0MmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMwYzFmMTg4ZjE0MmVkN2E4MjQ2ODBiMjA3MTcyYzU1MTliYzYxNGE0OGZkYTdjZjE2N2VkYjhkZGY3OTk1NmMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZhN2FmNzNlMjUyOGQ0YTY4MjNmMDk1ZDY4Njk3NTFlZDg1MWViNTY2NmZjMWNiMDY2MmJkOWQ1YzBiZjdmOTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRhY2VlN2I4NzI4YzQxNjA3YjA1Y2UxMmEyMmExYzFiNzM1ZDBlMWY4NGJjNWIxNzhjZDFkZjU5NTc5ZjM1MzkifQ"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/extractors/pptx_extractor.py#L140-L145",
+          "version": "repo-lines-v1:sha256:902e1f2bfbc43f247d52ee1d467de5ad5a62d9b5e68245a78a448bb3c1d5c7c3:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMWVjMjY5YTE4MmFlOWY1ZDNlMGRjNTY3YzY0NWZlY2YyY2EzMjk1ZGFhNzU3MDBhM2VlNTY5YjE5Y2RhMzg1NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNmEzNGU2MmZiMDQxOWNiZDBiZWIwNmUwMGFlOGEyY2I1ZGJhOWMwNDk1ODM0MzJkZmI0ODNhNjYyOTAzYTk4YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjZmNDE5NWQzNzBiN2M1M2YyZDNmOTc5MTdjOTUwMzI0NWZmMmU3ZWNmYWUzYjdiMjk4NDk3NjYzY2VmMGVhOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTlmMmZhMjJkM2NmZmVlODNiMzZhYjhmZjgxMzVhZjBjZjE1Y2VmN2JlZmVjYjY3ZDhiOWFiZTFmZmRmNzFmNyJ9"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/extractors/pptx_extractor.py#L161-L163",
+          "version": "repo-lines-v1:sha256:71fa1519553689d9209beb274bd0f5f1ebcc593748bdbeaee438472acbb81574:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTQ5OTZlNDdlMjliMzc1NDM1MWQ5YjZmZDI1ZTFhMTQ3YzRlYjlhYWFlZmQ5Y2IzYWQ2OGIwYmY3ZWIyMjAxMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTYxM2E2NmMxMDNiNzE3YTEzNmVhYWFjY2I1ZmNiNTdmNWFlZjAzNGQzMjhjNGVlMjk3M2ZiOTMyYjNkMzkyMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTE2OTlmZjZiMmNhYTk0YWNjOTI4OTFhOGIzYjYzMmFjOTNlZDMyZjNmOGIwOWQ5NjUyZDIyYzQ1ZGU4MGI4YyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_5cc24b77502b4911bbe47b42248996f0",
+      "statement": "The PDF extractor determines if a document is scanned by counting pages without extractable text and comparing against an 80% threshold (SCANNED_THRESHOLD), with early-exit optimization when reaching the threshold becomes mathematically impossible. Scanned PDFs are rendered page-by-page as PNG images at 200 DPI with special ![ocr] markers to route to OCR-specific pipeline prompts, while text-containing pages in scanned documents use direct text extraction.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/extractors/pdf_extractor.py#L11-L35",
+          "version": "repo-lines-v1:sha256:619b5c5983b8bca848ee6ce16ae71e41d9ccfb846e287e305720f4da92f0a347:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmZjA2ZWRmOWZjMWJlYmE2Y2ZmNmMyOTM1ZTFlNThhYjRjOWI2ZDlmNWU2ZTg2YWJkODY1Yjc3MDMzODE1NmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYwMjdkZmE2YmM3M2EyNTA3ZTA3ZDk2MjZlYThlMjk0YzMyZWRmYTRhOTFmZWE0ZDFjOWJmNmIyNGMwYjMyMjEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdlY2MyM2U0M2Y4MTI4MzUwODYzZDFlZmRhYTQwOGNjZjQ3OTI5ZWNhMTE1Y2NmYjMyNTUyNjRhOTE0NTNkNzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjViMTA0MTVhZDdiOWVjZTkzNDAxZWMwYTNjNDExZTBlMWI5YmYwYTUyNzZkYTQ4Mjc0NTMyZmZjN2UzNmFmYTYifQ"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/extractors/pdf_extractor.py#L50-L81",
+          "version": "repo-lines-v1:sha256:0fc57b759e44a664c11ab8049a8c76662cbc6a60ff39854af3f0e48218d5c786:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNmM2EyNzc3NTRlMTg3YzFhNjRkOWQ0ZDIwOWQ3NDEzYjY3OWZkMWRkNWQzNTQ3N2U1OTNhNjk5NGFmODRkYzUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMwYzFmMTg4ZjE0MmVkN2E4MjQ2ODBiMjA3MTcyYzU1MTliYzYxNGE0OGZkYTdjZjE2N2VkYjhkZGY3OTk1NmMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ3MjIzMTA2ZmQ4NzQyYjcwZWEyMzNmOWRjMzU5ZjRiMDJiYmIwNjliNzI4M2VlZjc2MjQ5OTUxNmJkN2I5YzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIxZjA3M2Q5MjlmMDU0NTAxMjZkMGNlNGVmZTEzODE0NWJkOTU1ODdiOTJkYmY3NzNmMDMxOTZiM2MxMGFiYWQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_81f10e0785584e02b080bcae0c077cb8",
+      "statement": "PDF formula detection uses heuristic analysis: it checks text spans against known math font names (symbol, cambria math, cmmi, etc.) and Unicode math character ranges, classifies spans as math if more than 30% of characters are math-like or for short spans with any math characters, groups adjacent math spans into regions within 1.5x line height and 30% page width proximity, filters regions under 10 pixels wide, and classifies formula regions as display mode when they span >70% of line width or as inline when under 30% of page width.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/extractors/pdf_extractor.py#L84-L140",
+          "version": "repo-lines-v1:sha256:f5e6c43ecdf3e159da07503ea59d5da26c075a84f7e7cb0bb38251d64381480a:eyJzZWxlY3RlZExpbmVDb3VudCI6NTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhkMmQ4NmY4M2Q1YzM2M2UyNWVhZWQwN2U1ODA0OGUxNjFlNzY3YzEwY2FjMDkwZjM1ZTE1MTNhMDc3YWVjODUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMwYzFmMTg4ZjE0MmVkN2E4MjQ2ODBiMjA3MTcyYzU1MTliYzYxNGE0OGZkYTdjZjE2N2VkYjhkZGY3OTk1NmMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhjYzRhN2QxY2M3OTZhYmEzZTQ2NzIzMzI3ZjUxN2U5ZjgxMTk4MmQyNTBmMDcwMjk4NmU0YjU3NjRhZDk1ODkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdjMDRhOTE1NWIwYTZjY2E1MDNiZGMyOWJhYmM3ZmJjZDU2NGM4YmNlYTljZTc2MjljMzE5ZjZmYTk5MmEyNmQifQ"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/formulas/pdf_formulas.py#L101-L130",
+          "version": "repo-lines-v1:sha256:e47dfba68458309e3de78a695251b583ffe48200bb4a2e6d72dd7863e7afc9d0:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA3MDMxODg2YThiNDRiMzc5NjBlNTMyMmQyZTkxY2UxM2IxNTc0MmVlNWM4N2Q5MTVjMWJmMzhiYzdkN2UzZmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU1YmM0NzExZWNjYTA0NTBhZmM4MzI3NzlhODg2NzZhN2M2OTYwZmEzZGE1YWY0MTBlZTAyZDFlMDE1MTU5MWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ3MjIzMTA2ZmQ4NzQyYjcwZWEyMzNmOWRjMzU5ZjRiMDJiYmIwNjliNzI4M2VlZjc2MjQ5OTUxNmJkN2I5YzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBhYWNmNTYzNTcwOTNlYzUzYWIwYWZmZjE0MGYwYmRlMjVhNWQ3MWYxYjkyMTg3NmY4NzkxYWYxZTU0ZjA4NDcifQ"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/formulas/pdf_formulas.py#L141-L195",
+          "version": "repo-lines-v1:sha256:c867379cbd863fb5e6ef1a32e30b87bfa5c1bf3ef3116fd95ecab97612ac9168:eyJzZWxlY3RlZExpbmVDb3VudCI6NTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2NDQ0YmFjMjUzNTBlNmIwNzdkMWQzMzllMjgxOGU0NzEzMWZmYWI4YmZhYzhjZjMwNTYzZWRjNTk5NWJkM2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliNGViNGY3MmQ1YmQ5ZDRiZTkwOWRhNzE5ZjgyZWJkMDJkYzM4NjAxNDhhNDY3YjNiOTVmNDZmMjBiNDdmMTkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUwYjIxYmY4OTVmYWUyZDczOTIwZDkzMTc4Y2ZkNTg0MWNkZjhmOTUyNDUxNmM4YTU2NTg0MzZhNGFjNDhmM2IiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjViMjAzMGMyOWE0ZmQ5ZDAyZDBjY2U5MDdhYWU1NDcxYTkzNzdjMjY1OTQ1ZjdkNjk3NjlhZjI1OTQ4YzNjNzUifQ"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/formulas/pdf_formulas.py#L198-L220",
+          "version": "repo-lines-v1:sha256:5b12f566c027d6688b99386a2ea6dd1c6728ff95cff742fbfd5d12e2cda8c54f:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMzNGYyM2I5YTVlZTI5NWRjMjUyODJlOWQ1YWJjZjhmNTE0MTFlZmQ0M2QzNDQ4ZjhjNmMwNDVlMTYwYjgyNzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMxZmRhZDIxNjU4Y2E3Zjg3MzAwNDE3OWQwNDJhNjllZjA1OGU2YzM0YWViNTc0YjRmMjUxN2RlN2Y1NzFkYjEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ3ZDQzYWQ2ZDZmNmEzN2U3OTkxNzUxZThkNmRmOTEyNDg4NWUzZDlkOWRiOWYwNTJlYTZjZmZkZTJiYTBmZTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ3YjVjYTBkMDliZWFlZjQ0MDhkZGE3NzJlNDcwZWJkOWYyMGUxYWM5ZGU5MmRkNzNlNWZiMWM2ZDAyOWQ2MzEifQ"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/formulas/pdf_formulas.py#L42-L98",
+          "version": "repo-lines-v1:sha256:7124918b42942750a16aee2a86ece3d905208c6c4d596ec6fd91333dc0165b23:eyJzZWxlY3RlZExpbmVDb3VudCI6NTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE0ODk3ZjY5ZjhkYjNlZWQzNWRiOTU2MmE2YTQ0MmZiMzg2MDUzNWQyMWIwZjQ0YWJjZDE1M2FhZTg3NDczMzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZhMTFjMDU2N2QwYTVmOWU5YjEzNWY2NWNkMjUzNzJkZmQ2Mjg3NzVmN2MxZWQyNTNmOGJhZDQyZGQyZDY2NjkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFkNWI0NzA0NzU1OWJjNjk4MjBmMjcwYjljYTIxZWI4MWYzZDRjNWE2OWE2ZWQ0YTRkNmQwOWI4ZDVhMmQ1YTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY1NGEzZGFmMzRhZmQ5NDQ3MmY4ZWEyZWUxZjgwMjdhMDJjM2RlOTA3ZjlhODAwMTMzMmNhMDA1Y2FjZTlhMTgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ceb475f6855540f58a6bc62d8955ee07",
+      "statement": "All extractors that produce images use the shared get_img_dir() utility which creates per-file subdirectories under temp_dir/images/ using an MD5 hash of the file path and truncated filename stem. PDF formula regions are rendered as cropped PNG images at 200 DPI with 4-point padding around bounding boxes, saved to temp_dir/formulas/<safe_name>/ with degenerate regions (zero/negative dimensions) skipped.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/extractors/utils.py#L5-L12",
+          "version": "repo-lines-v1:sha256:cf2ace29338400877592b63bd1d7ec587386dfba92fb28ddf50c64847789c61a:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzYwMzdmMzVmNDg1N2I0YTc3MDMzZTdlOTc1YTg3Yjg0NGM2NjRkNTcwOTcwMGJiYWYxMjE4ODYxMDA3ZWNjMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzA4NmM1ZjQ0NjUwMjkxZmZmZjkzYWVkNWI5M2IyYTRiZTRjNjhmMjY1ZjkxZWI1ZGFiOTczOWRkM2Y2Mzc5ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYTkxYmYzZDk2ZjFiMTE5Njg4ZGVlYTlhMDA0YjJiM2ZlYmIxODBiYjhmYjIzNDQ2MjU2MTRhZGM4NTk1NjNhYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/formulas/renderer.py#L19-L72",
+          "version": "repo-lines-v1:sha256:f6c148b6847978e11781945fe16d580890136958eab31c28751f93ef7b58b466:eyJzZWxlY3RlZExpbmVDb3VudCI6NTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk4YWIyM2UwMzc4NzA3OGQyM2FkMWM1MjgxNzYzYzdiNjU2YjdhOGUxOTQwZGMzMTFhMWI5MjAwYzgxOGViNTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ4MDFiNTE5NzE4NzA5MjFjMjUwZmE4ZTlhNmE0NTkyNWZhYzgyZjlhNDdiZDM0ZmMwYmJmMGNmMDZhZWEzMGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjliNGViNGY3MmQ1YmQ5ZDRiZTkwOWRhNzE5ZjgyZWJkMDJkYzM4NjAxNDhhNDY3YjNiOTVmNDZmMjBiNDdmMTkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a8994b73a15a43b486c3c18051d18da0",
+      "statement": "The system distinguishes between display formulas (m:oMathPara element, entire paragraph/line is the formula) and inline formulas (bare m:oMath not inside oMathPara, embedded within text) for DOCX and PPTX. Each detected formula is serialized to XML and stored as a FormulaRef with is_inline flag and context text, producing <<FORMULA:N>> markers that are inserted into the markdown at appropriate positions based on formula type.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/extractors/docx_extractor.py#L86-L118",
+          "version": "repo-lines-v1:sha256:1be0ed965597317fe30b4bf2c905a8f1da8e0649cebfa96161853b414fd9ac45:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNjMzYyNWYyMzNhYjc2YzQ0YzM3YTU3ZGQ3NWYyMmQ1YmVmYzIxMmNkZmI3NzU2YTg1MDM5MThlNTRkMjkwMDciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA1NzU3NGNmYzVjZTgxNGExYzM4NjdmMGE2NTNmZmUzMGJiZDU1ODI1YjVkOTc4OGJhY2QxNjViODhmNjUwOTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhjYzRhN2QxY2M3OTZhYmEzZTQ2NzIzMzI3ZjUxN2U5ZjgxMTk4MmQyNTBmMDcwMjk4NmU0YjU3NjRhZDk1ODkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYyNDE2MzViMWZkOTMyOGY2NmZkOGM0ZTVjNzBjZGJmMjk2NDkwOTA0ZGZhN2U5ZjZiM2I5ZDM2NzhkMTE1OGUifQ"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/extractors/pptx_extractor.py#L66-L102",
+          "version": "repo-lines-v1:sha256:cac190846c1e35b601391cfdd961cee348126dff8b0236eaf550d634f171796d:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxZGE3YTQ3MDA4NzU3NGQ3YTUxNDQ2YTdhMDJlNWRlNzAwMGQ1MjlkMDZjNTk1MjdhYzg5M2NmMTY2ZmJjYmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA1NzU3NGNmYzVjZTgxNGExYzM4NjdmMGE2NTNmZmUzMGJiZDU1ODI1YjVkOTc4OGJhY2QxNjViODhmNjUwOTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhjYzRhN2QxY2M3OTZhYmEzZTQ2NzIzMzI3ZjUxN2U5ZjgxMTk4MmQyNTBmMDcwMjk4NmU0YjU3NjRhZDk1ODkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIzYTY5YTdjZmJhYTM3M2Q3NjI5YmM5MDliOThhNTIzOTIwNzk5YjMzNWY0Y2Y1ODZiMDliNWVlNzlmYzI3YTYifQ"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/formulas/__init__.py#L11-L21",
+          "version": "repo-lines-v1:sha256:68a3054bbb4680c58982b16d4e63005ac2f1a2d2529317f518b44d553ffc4cdd:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI2ZmJhZTBiOTFkNDRmYzBkNDlmNWRlNjkxZGE2ZmM0MzFmMjYwMTM0YmY3MzFlMGUyMWY3NjQ4MDk0MzM0Y2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3MTI5YmQ5MmJhNjJiNzQwOTI2NDM1ZTk4Yjg1YmFkZjNiNWFjYTUzMDFhYTU0ZDk0NDNjNjg5NjBjZWJkZDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFkOTUxODlmNTJlMTIwZTU5ZDkwZjE3Mzk2ODgyNTc5Njg2NDgzMTJjMGRkZjYxNTg0ODRlNDNmODFmNTdmYmUifQ"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/formulas/__init__.py#L23-L35",
+          "version": "repo-lines-v1:sha256:b5d5d2c278812cdb403aad5170ef88fdfc61cffad696b9c8a2011db272115191:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI2ZmJhZTBiOTFkNDRmYzBkNDlmNWRlNjkxZGE2ZmM0MzFmMjYwMTM0YmY3MzFlMGUyMWY3NjQ4MDk0MzM0Y2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA0YjFjNTQ4YzIyNzVhOGZmMWM4YzNjZDA2NmQwYTIyNzBkYWZlODhmZDAwOGEyYWRhNGI2M2ZlZWQ1YmIxZTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY0NTlmMWNiZWMzMDIzMmU4YzEyY2UyMWYzMmEwZDU2MWJhMmZiMDI5Zjk2NGIwNjU0M2JjZjYzMTAzYTE4Y2QifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.6.1",
+    "at": "2026-10-03T09:19:39.759Z"
+  }
+}

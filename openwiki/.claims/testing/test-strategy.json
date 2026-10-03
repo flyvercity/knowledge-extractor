@@ -1,0 +1,116 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:031462e065e53ffa77990579939193185ee2e72445ca7d165aba5ee3ec63a225",
+  "claims": [
+    {
+      "id": "claim_c3ee27785b1f4b7db03ce8e45b25864e",
+      "statement": "CLI unit tests cover argument parsing, defaults, and sanitization of --translate-from, and they stub the pipeline entrypoint so they do not exercise the full extraction pipeline.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/cli.py#L23-L36",
+          "version": "repo-lines-v1:sha256:590d0f7e84813f3b2b73bfd83ff314e391c01b03aaaf37fd86d4c18a17f62308:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBkYzYwNDc4YzNlZjc3MDNhM2Y3ZGQ0NTliODJlMTJlZjg2NzFhYTllMDBhZWVlZTY3ZTYxYTUxOWQ0M2U3MGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMwOTMyYTQzMjhmZWM5MzFkNWU4Yjk3Zjg5MjZkYjIxM2Q3NjM3OGEwZmVjNDQyNTUyMTg2YjJkMjE0MmViZjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ1MzBjODM0NTA5ZDQ0MTIwZWQ4MDA5OTBjYzE1NTA1OTkyNjFkNTU0YThhYjQzYzUxODYyZTNhYTg4ZWM3MDUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRlYzlhM2I3MTllMWM1ZDlhNzhiMDM5ZDc4NDQ2YTU0OTcyZmNkOTRiMzBjYjc0ODU2YjhhMTdlN2RmN2ViNjYifQ"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/cli.py#L91-L111",
+          "version": "repo-lines-v1:sha256:136addeda831f2f0ccae39170338db8b4462e2b6ba8724f4c5dccb27f95f4b77:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY2YTY1ODQ0ZDljYTUxMDllMTMyYjdmOTBhYjNjMWI0Y2YyNzBiNjRmZWU3OWRmMTQ5ZjAwMTIzMWJkNjNmMGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA1ZmRhNzZlNGIwYmFkMmRlYTk0MDY0ODFlNTVjODVjNDU0YjdlYTFjMjRhNzc3ODM3M2NiZmE0OWMxZjM3ODAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIyOWFjZjZlMDFhZDdlNjZjZGU0ZWEyNmFjOGMwMWE3NTI2ZTNkNDI0YTc3ZmM2YWU4ZTU2ZGEwMWU0OGJhZjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYwNGQwMThmYWZjMjVhY2I0YThkZThjMWNkYTNiMDA1ZDFhZDRkNTQ5MjIxMjQ5NjBjZDg2NGExNGVmMjE2MGEifQ"
+        },
+        {
+          "resource": "repo://tests/test_cli_translate.py#L34-L51",
+          "version": "repo-lines-v1:sha256:012332e2e7f322b9e234e12fcc37ef3a6592836f1b13903f6e801046abfa89eb:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNlODExMGE3NjgxNDJiNzNlNmRlMWMxZmQ2ZGEzMDA4M2E1YzdlZjc5ZDIwYzBjNDYzMjA3NDg2MWVjMDA4NzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZhOTY1YWU3Y2YzOGZlMjgzYjRlMDUyZjI4NzAxOWNmYjBmMGRiYzAzNTczZWUxNzE4MDY2ODZhYzA0NWI3ZTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM0OGQ5NmM4ZmY5ZjlhMDVmNzg3YzBhNDc3OWYwYzk1ZGJjMDgwYWMyNjFkNWVlYWQ3NWZhZDY2NTgxYjk5NTcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8a26d73debe14c45964462721d03b461",
+      "statement": "The reindex CLI command is tested through CliRunner against temporary directories and covers root regeneration, nested generated-artifact removal, user-content preservation, --keep-nested, missing-directory exit behavior, and empty-directory behavior.",
+      "evidence": [
+        {
+          "resource": "repo://tests/test_cli_reindex.py#L22-L43",
+          "version": "repo-lines-v1:sha256:022b128e7a9360027ac927a3df73eba3735efc089889999085ce2f871e4e248f:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEyNTJlMzkxYTM3ODcxZDYyZGQwZjZiMzJkNzA3YTRjYzllNGYwOWYyMzU3MDhmOTY2NTYyODNhNDE0OTEwNGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc5MjNmYTY5MmJjYmNhY2ZjMGVkOTIyYWU4OTQ5ZGI1ZmFiYjkwZGZlNzdhMjJkYzI0YTkzZjBmYTM0MDllYTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjEzY2Q5YmQxYmRlNDU1Y2U1MTYzMzVkYzM5ODUzOWExNzkyNTBmMzJhMDM1YjA4YWRjNmY4Mzc4ZTFlNmVmNGUifQ"
+        },
+        {
+          "resource": "repo://tests/test_cli_reindex.py#L45-L78",
+          "version": "repo-lines-v1:sha256:cfacb086b5017e5cd0259caa37d421b88718a1586a353002beffb9a06ec533e8:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM2ZDE1NmZhN2JiNWNiMmVhODA4ZmE2MWMyNjU2MGYzZjRlMTE5NjZmNWU0YzZlNWNjN2Q5NzVkZDIyOWZjMzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcxZmE3NzcwMTJkMTI2YTllNTgxMDk1ZmQyOTBmZTYxN2IzZTViMGQxNDUzZGNlYjk4Nzg0YzAyYWZiMjM2ZjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZkNzUwMjdkNGE2YThlZmJiMTA4N2FlNDk5NjIwYzc0YTVhMGI5NDVhMDZmMzZkYjcwZGU5OWFhYWQ2ZjJmMjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_0214b87d59e94c7e91ebc3d2c37ad0d2",
+      "statement": "Index generation tests cover title extraction with stem fallback, grouping by relative parent path with a Root group, hidden-directory exclusion, manifest shape, POSIX paths/links, and empty-directory zero counts.",
+      "evidence": [
+        {
+          "resource": "repo://tests/test_index.py#L32-L65",
+          "version": "repo-lines-v1:sha256:08a7c77872140b4acbd14e5d8e5fb3c3e6d09758856b5b8f18381fcb7c862e69:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQwNmQ5YzdmY2UxNzI5NGQzMWQ0M2U0NDNmNmYwNzFjZmQ2ZGRkMDg2OTgxNzgwYTliNDY5MTI3M2Q3Zjc5MmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAxMzUyYjg5OGYwNGU4NWI2OTE3OGE0ZjRlMWE1YWIzYjZlZGNlMmZkNTZmMDU4MTBhNmQ1ZjQwOWI3ZmMxMTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRhMzUxNzI5MjJhYjc2NTgxM2JiMzYxODkyNGM1ODE4ZWFjZDEzZWNhYzI2MTdhZDFkMmQ0YTUxMmRmOGE3YzQifQ"
+        },
+        {
+          "resource": "repo://tests/test_index.py#L67-L71",
+          "version": "repo-lines-v1:sha256:3f1f4d9184e8407c1748af9689f12ba3584c77a43a21ab1c201c80fed2f260fc:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMGYwYTc0ZDhkNmQwNDZkMDFjMDI0YmRiMjExZmQyMzAxYjM5NDQ3MzcwOTM1YmQ1NTRjM2U1MzFjZDY2NThjNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjI1NDBiY2RhNTI0MzQyNGY0NmUxZjViODY0YzZkOTMxOWE1NGFlZTMzNGU3OGZkYWRmODJlZGE4NDQzNDkwOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYWQyNDAxMjk4M2ZhNjYyMmJkMzcxZmMxODRlYWQ5ZmNkY2Y4NGM4M2VlM2E1N2EwZDZjMjU0MGMwNmNiNzU4YiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_2bbf54eb9b6a469c898cef427727a486",
+      "statement": "Generated-artifact detection and cleanup tests cover recognition of generated index.md/manifest.json, preservation of user and hidden-directory content, removal of nested generated artifacts, treatment of an empty manifest as generated, and resilience to per-file unlink errors.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/index.py#L94-L153",
+          "version": "repo-lines-v1:sha256:d3c6ed9d18206108505b01648b4e6b5df1267a8a61b6a758175e5973c3ebbd1f:eyJzZWxlY3RlZExpbmVDb3VudCI6NjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIzOGY5MzdkOGNmMTI2ZDI1ZDk5ZWE3YWNjZGE0MTZhMjJmODAxYzllZjk3YjY0OGY3ZDVlYTYzMWUyZGNjMDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcwM2Y3YmE1ZDUyOGJjMWY4MzgxZThlNzExNzM5OTI4OGM4NDUwNDg4ODg5MGEyOGE0ZjQ0OWIwYmJhMDM5MTgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM4YjFmOTNjMTg4YjliNjk5MWJkN2Y2MjJhZmY3YTRjN2EwNGEyZTMwMTNjMWFkZWQ2MWIyYjU2NDU0NWUxODIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://tests/test_index.py#L89-L160",
+          "version": "repo-lines-v1:sha256:0f2e325221a08f379fe3b9fafb0125b556731046fc420aae03930a8f6e9328cb:eyJzZWxlY3RlZExpbmVDb3VudCI6NzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUxMjNhYjM0ZmRiYjdhMGI2MzkyNGY3YWIxMzRkN2I3NWExOTkzMTg5OTJlMGE4OWVmMWE0NTRiMzA3Mzc2NjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE3MjA5NzZhOGJjODJiYTdhMWNjZTQ4ZmNmMDlmYjc1MzMxMWMzN2U2ZDJlNDA4OTJmOWMzNDhmMGMxMjhkM2YiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJlOTYyNWNhOGRjNTcxMjlhOWY0ZmRiZWU3NzM2MzdmZmE0MmMwZWFmOTU2N2EyNWRiYjJjZWE0MTEwZTdlMTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d6c63ff893c34c38a2fec3f486658d12",
+      "statement": "Pipeline translation tests stub the docx extractor and AI client to cover translation invocation and output replacement when --translate-from is set, no translation call when the flag is absent, and retention of cleanup output when translate_content returns None.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/pipeline.py#L118-L135",
+          "version": "repo-lines-v1:sha256:4b7e3c30228698ae6c548648cf3698f68d4ddc8aa3d739be64f2da776f345fac:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJjZDYwZDFhMWY5Y2M5MDFkOTBkZjU4OTQ4NzQwYmZjYTczY2Q0YmRhZDUyZDQ4OThkYjcyZGE3OWUzMzA2ZTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRmOGVlMGEwZGNhMjYzZTRjZWM1MDRiYmZiOTc1NjhmYWNlZTIyNDA1YjNjNDIyZWJkZDVjZmVjYzE4NzIyODMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ5NzM5NTE5ZWUxNjgwMGJjMjkwNTdlMmRhMDBhYTU4NmJjNThjYjllMDdhOTQ1MmQ5Mzk5ODNhNGNhNWRmMjEifQ"
+        },
+        {
+          "resource": "repo://tests/test_pipeline_translate.py#L59-L113",
+          "version": "repo-lines-v1:sha256:8922a1e7bca421053c99afe49dcaadfb410b5e476a585270da6d510c43fb1d95:eyJzZWxlY3RlZExpbmVDb3VudCI6NTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVmNDNlZGI0Mzc5OTMwMDFlNTU5ZTNiYWJhNTRhNjU5ZWJmZGJiMjdhNDc3NDlkZjJlNjhjMDVhMGMwNmNkNGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZmNTQ4MTFhNmYxNTA4NGU0NWVjNmI2MDE5ZGM1NjNlNGFkNjgzOTQ4Y2Q5YTM1NThlYWI0MGYzNzJkMDQxYjQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQzMDQ0MTJjNTg3Nzc4NGYxOWZjODBkZmZmYTNhZGZhYjdlM2I1M2ZiNWNmNWRhYmY2NWJmMjc3ZjQ0MzA3Y2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8cabd66c1c6943f88589584c7f8c10ab",
+      "statement": "AI client translation and chunking tests cover None client behavior, trivial-content passthrough, single-pass call count and prompt content, chunked translation and rejoining, and per-chunk resilience to AIProviderError and AIBadRequestError.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/ai.py#L310-L376",
+          "version": "repo-lines-v1:sha256:2c54af45b2021fe354a4b2abe711540f71bf94d9231f23b19055c29ae4c330f4:eyJzZWxlY3RlZExpbmVDb3VudCI6NjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdjNjk2ODE4MTk4MjgxMzE5ZjA4NGMzYWNhZTc3NmJjNjJmM2UyN2U0ZDUyOTAxMTE2YTVjNTQ0OWY1ZjJlNjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJkYmJjMThlODI2ODNiNWIzZGVhZGM1M2MxNTBkOGEwMDg0MTc2YzFmZTRkOWJkNjBlZWI5YTE1MDI0OWUyN2YiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEwNzFjMGFmMjFiNDk1OGMzZjY5NjdkNTc1Y2MyZGVmYmNjZDI0NDRjM2M4M2E2YTY0MzIwOGFiOGY4OTY2ZjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMzMzM2MjI3Y2Q1ZTM3NWE2N2Y0NzI3NTBjOTE4NGUyNzU2ZGY5ZWQ5ODhhY2E4MDkyNGEwNTE3MmY1NzAzMTAifQ"
+        },
+        {
+          "resource": "repo://tests/test_translate_content.py#L22-L93",
+          "version": "repo-lines-v1:sha256:864cad915ee636681a2e6f7e9b9730f9ff4a9157f7ccc93f61774fdbc8a4ed25:eyJzZWxlY3RlZExpbmVDb3VudCI6NzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdhYmRjZWUyZDRiMTI5ZGUxZDQ2Y2Q1M2E2N2Q1NWJhMGJiNDgyNjcwNjJjODBjMDVhZmFhOTQ0YjM4Yzc3YTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYyMTA2OTc3ZjRiNTcyMzczOGNkODE5MGVjZGI5YzZjOWY1OTE4MDgwNTNiYjViYWJhMDVmODBjMDQzOWYzMDAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNiM2E3Y2Y1NzQzOTA2OGVlNTNhMjA3OTYzYWJkMjQwN2FkMmQzNzM5OGI0MGU4OGYwOTJkZDZkYWMyNzFiZWUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_87cea081945d4674ae9a6c6f3d8b68b2",
+      "statement": "Chunking tests verify that oversized sections without ## boundaries are split without breaking inside fenced code blocks, and that TRANSLATE_PROMPT documents Mermaid label-only translation.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/ai.py#L117-L138",
+          "version": "repo-lines-v1:sha256:6928ac5d857fd6184a1a1cc1c2e81a637ec854d450b8ca47516628e90190c15d:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRjZGMyYzZlODJlMThkM2VkYmI2YWViNTdiNjI4Nzg2ODEzNzQ5NTU4MDdhMWYyNDJkNTExMjg2N2Y3YWNjMTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIyMzViYzllMjBlYTk4MTk2MjBiYmI4NzhhNmUzZTNmNGRlMWZlOTAwNGY4Nzk3MmVkN2FiMWJkMGJiM2IwZTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFkZDQ1NTZkYTEyNWJhZTNkYjhhNzQ1YjM4ODZlNzQ5Y2ExMzRjOWU5ZGNkYjliZGIyYTRlM2YxOGRmNDVjZjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYyNTY1YjMwNjg1Mzc2OTI0ZjJkMDdlNDMyMjY2NzlhMzRmOGM0NjBiZjliMTk2YmJkMTljZTYyMzYwMDFlYjQifQ"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/ai.py#L378-L427",
+          "version": "repo-lines-v1:sha256:3ed72830e5953de9c7b6a6b715d1eba2dd1b39ef23fa5b110b95beb8e03891ae:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxYWJjZDBjYzY5MTNkNGY1MWViMjFlNGY1YWZjMmU5MGY4NmQzNmE0NTBiYjQyY2IwNWM2ZjNlMGQ3MDZmOGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJmNGVlNjFlM2E4Y2RmMDZiNmEyMThiZDViOTUwYTljZDFkNWNhOTMyNzNmMjU3NGQ0ZjU3MTRhMGNjMjYzMWMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRiYjlmNGFmYzhkYjIyMzU0MTM5YjJjNWI2MzEzY2UzZGI3ZDI1YjUyYjIyOWRmNWM3M2ZlYjFiMTY5MWRmOTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJiOTRhYWVjMjQ2ODQxZDY0YWM5MWIzOTQzNTlkNWRjMzIzOTM5MWM0YzdhMjQyOTc1MWQyNmMyMzRmMDA0YmQifQ"
+        },
+        {
+          "resource": "repo://tests/test_translate_content.py#L95-L114",
+          "version": "repo-lines-v1:sha256:d583bc3ada5ce8c4ed45fac73d2b57209dfb1f5cdb0bcaa31bcea0dfef114e27:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImExZTk2YTVkMDliM2M3Y2MzYjJhNzBhNmQ0NzBkNjY2NmEwYjk2MTA5MWE4YzdjMDJkZmIzYzE1NjU3Yjg0ZjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxZGI1ZWU0NTAxMTQxODA1NGFlNWRiNTBhMjZkY2Y2MDdlMTNlZTBlY2IyYmIzZWNmNmE0MmI3N2JlZWNiYTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzNzQ4Mjk5YzQxNzUyNDA3YTIzOTMyMmE1YzY4M2NlYWNhNmEyYjg2YmRlNDM2MzgzZDZmZDQ2NjQ5OTVkYjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.6.1",
+    "at": "2026-10-03T09:19:39.759Z"
+  }
+}

@@ -1,0 +1,182 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:ca99affd734672363731366690b98f027bd73242c2f4354f67d8ba5a07ac9365",
+  "claims": [
+    {
+      "id": "claim_3e0607a45f554445b59506a9a224e311",
+      "statement": "main.py is a thin wrapper that inserts src/ on sys.path and calls knowledge_extractor.cli:main().",
+      "evidence": [
+        {
+          "resource": "repo://README.md",
+          "version": "repo-file-v1:sha256:8898d7a70216facf1ab79b6890c1efd8c1fc57a8727d4d7e3477b98b8f9b5503"
+        },
+        {
+          "resource": "repo://main.py",
+          "version": "repo-file-v1:sha256:f1e330dc9f2781f87ea223729e4180a19a6114ac8ed8eab1e26ecc2bbf49dcc9"
+        },
+        {
+          "resource": "repo://pyproject.toml",
+          "version": "repo-file-v1:sha256:5f696ab44087c98eb111698160248fdd5bfee26da2fb575ed467326c2558ffae"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/cli.py",
+          "version": "repo-file-v1:sha256:023b430cb7f0d3bdd3168403b5e89d093e4afd384609ba423ddcfdd9b65a33c9"
+        }
+      ]
+    },
+    {
+      "id": "claim_51ee2cf34a95418f99d875f7fa23d80e",
+      "statement": "The CLI has four subcommands: convert (default), clear, lint, and reindex. convert_main provides a shortcut enabling uv run convert without a subcommand.",
+      "evidence": [
+        {
+          "resource": "repo://README.md",
+          "version": "repo-file-v1:sha256:8898d7a70216facf1ab79b6890c1efd8c1fc57a8727d4d7e3477b98b8f9b5503"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/cli.py",
+          "version": "repo-file-v1:sha256:023b430cb7f0d3bdd3168403b5e89d093e4afd384609ba423ddcfdd9b65a33c9"
+        }
+      ]
+    },
+    {
+      "id": "claim_5a4599d345524dd29cfabfd5cd1833a6",
+      "statement": "The cli group uses _DefaultGroup, which forwards unknown first arguments to the default command (convert) so flags like --input ./in are valid without an explicit subcommand.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/cli.py",
+          "version": "repo-file-v1:sha256:023b430cb7f0d3bdd3168403b5e89d093e4afd384609ba423ddcfdd9b65a33c9"
+        }
+      ]
+    },
+    {
+      "id": "claim_4fe6cbc65ef74be4915f955c3576a3d4",
+      "statement": "Each file goes through a fixed pipeline sequence: extract, formula processing, OCR, heuristic filtering, AI image analysis, AI cleanup, optional translation, write output, lint, and index.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/pipeline.py",
+          "version": "repo-file-v1:sha256:66e97c36ccfbe88717875f928cd2c2c0670ef20df4374d7661d8508ae3d56424"
+        }
+      ]
+    },
+    {
+      "id": "claim_7c2c48f6e2794b49ba8d053ecaad5208",
+      "statement": "AI steps depend on OPENROUTER_API_KEY. When unset, AIClient.client is None and methods return None or skip: formulas get placeholders, OCR and image markers are kept, cleanup and translation are skipped.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/ai.py",
+          "version": "repo-file-v1:sha256:796f62bfeeab9592b30b527642db9408161689760a976fddd486a99cc6d4fd9d"
+        }
+      ]
+    },
+    {
+      "id": "claim_4ba1236d06ad46eca315fcf97fc1b27f",
+      "statement": "Two error classes are defined: AIBadRequestError for non-retryable 400-level bad requests, and AIProviderError for provider failures after all retries.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/ai.py",
+          "version": "repo-file-v1:sha256:796f62bfeeab9592b30b527642db9408161689760a976fddd486a99cc6d4fd9d"
+        }
+      ]
+    },
+    {
+      "id": "claim_e85e5376db824d3f82a4687c4efb1b0c",
+      "statement": "The AI client's _call method retries transient failures with exponential backoff (2, 4, 8, 16s) and treats status codes 400, 401, 403, 404 as non-retryable.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/ai.py",
+          "version": "repo-file-v1:sha256:796f62bfeeab9592b30b527642db9408161689760a976fddd486a99cc6d4fd9d"
+        }
+      ]
+    },
+    {
+      "id": "claim_5245898b86cb474ca669d232303d023f",
+      "statement": "Incremental processing skips source files whose output Markdown already exists. To force re-processing, delete the output file or directory, or run clear.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/cli.py",
+          "version": "repo-file-v1:sha256:023b430cb7f0d3bdd3168403b5e89d093e4afd384609ba423ddcfdd9b65a33c9"
+        }
+      ]
+    },
+    {
+      "id": "claim_a4783a64d32d4b9a90e9bf21e3ec1a99",
+      "statement": "When --translate-from is set and some outputs already exist, a warning is logged because existing outputs are not re-translated. The dry-run flag lists files to process/skip and exits without processing.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/cli.py",
+          "version": "repo-file-v1:sha256:023b430cb7f0d3bdd3168403b5e89d093e4afd384609ba423ddcfdd9b65a33c9"
+        }
+      ]
+    },
+    {
+      "id": "claim_a80ede1fb34645cb8e0348a0ebf9aac4",
+      "statement": "The --translate-from value is sanitized before use to reject newlines and control characters, as defense against prompt injection via the flag value (spec finding P3).",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/cli.py",
+          "version": "repo-file-v1:sha256:023b430cb7f0d3bdd3168403b5e89d093e4afd384609ba423ddcfdd9b65a33c9"
+        }
+      ]
+    },
+    {
+      "id": "claim_dd79e7b9ab03490f9fdcbedda44ffa1e",
+      "statement": "Supported formats are .docx, .pptx, .xlsx, .pdf, .jpg/.jpeg/.png. File discovery recursively scans the input directory, skips .git directories, and maps extensions to format types.",
+      "evidence": [
+        {
+          "resource": "repo://README.md",
+          "version": "repo-file-v1:sha256:8898d7a70216facf1ab79b6890c1efd8c1fc57a8727d4d7e3477b98b8f9b5503"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/discovery.py",
+          "version": "repo-file-v1:sha256:39bc3a056c637b058f8f73dc3f3bb128ea1b666a9f598f8195fe0787d469bed8"
+        }
+      ]
+    },
+    {
+      "id": "claim_284dec01b5a648f496a80dcc3f0583ed",
+      "statement": "clear prompts before removing directories, lint resolves the directory and walks rglob('*.md') reporting per-file fix counts, and reindex takes a required positional directory argument.",
+      "evidence": [
+        {
+          "resource": "repo://README.md",
+          "version": "repo-file-v1:sha256:8898d7a70216facf1ab79b6890c1efd8c1fc57a8727d4d7e3477b98b8f9b5503"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/cli.py",
+          "version": "repo-file-v1:sha256:023b430cb7f0d3bdd3168403b5e89d093e4afd384609ba423ddcfdd9b65a33c9"
+        }
+      ]
+    },
+    {
+      "id": "claim_8712b06b864d4c388d36965ae818b88a",
+      "statement": "reindex rebuilds root index.md + manifest.json from Markdown already on disk with no extraction, AI, or linting, enabling the join-vaults workflow. By default it removes nested extractor-generated index.md/manifest.json artifacts but preserves user-content index.md files and logs them. Files inside hidden directories are neither indexed nor removed.",
+      "evidence": [
+        {
+          "resource": "repo://README.md",
+          "version": "repo-file-v1:sha256:8898d7a70216facf1ab79b6890c1efd8c1fc57a8727d4d7e3477b98b8f9b5503"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/cli.py",
+          "version": "repo-file-v1:sha256:023b430cb7f0d3bdd3168403b5e89d093e4afd384609ba423ddcfdd9b65a33c9"
+        }
+      ]
+    },
+    {
+      "id": "claim_a6029e024d8d4c57a957593c18beb407",
+      "statement": "pyproject.toml registers knowledge-extractor = knowledge_extractor.cli:main and convert = knowledge_extractor.cli:convert_main. DEFAULT_MODEL is openai/gpt-6-luna and DEFAULT_TRANSLATE_MODEL is mistralai/mistral-large-2512.",
+      "evidence": [
+        {
+          "resource": "repo://pyproject.toml",
+          "version": "repo-file-v1:sha256:5f696ab44087c98eb111698160248fdd5bfee26da2fb575ed467326c2558ffae"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/cli.py",
+          "version": "repo-file-v1:sha256:023b430cb7f0d3bdd3168403b5e89d093e4afd384609ba423ddcfdd9b65a33c9"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.6.1",
+    "at": "2026-10-03T09:19:39.759Z"
+  }
+}

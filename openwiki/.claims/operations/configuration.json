@@ -1,0 +1,192 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:aee0c461d74226772ceab5f8635b92dcb510133e8298231ce5533eda3c98787b",
+  "claims": [
+    {
+      "id": "claim_4d92249f86724819a27cecfeff00e890",
+      "statement": "The extractor authenticates to OpenRouter with a single environment variable, OPENROUTER_API_KEY, loaded from .env by python-dotenv at import time in src/knowledge_extractor/cli.py; if the key is unset, AIClient is created with client=None and AI steps are skipped while raw extractions are still written to output.",
+      "evidence": [
+        {
+          "resource": "repo://.env",
+          "version": "repo-file-v1:sha256:ae203dbe1794a51984a5b21003db1f5a3703446ecbd1f665b92f101449956d50"
+        },
+        {
+          "resource": "repo://.env.example",
+          "version": "repo-file-v1:sha256:d35b4eb3de9b5f765e2544bba2c9ab0cd629b447276011ee3b65e986225e6efc"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/ai.py#L142-L149",
+          "version": "repo-lines-v1:sha256:cdf216df3568bcd3b1a451d8143cb906e70858b3ce1e8928ae0df05474bd0c52:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODkwZTQzYjMzMzZmOTNmNzA2YWM3Mjc1OWExMjkzYTIyODk2M2EzZTY5OWZlYzhjOTgxN2U3ZTM0MTE1YzBlMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWY1NzkzMzRhYThiNjVlNmVmMzA0NWQ3NThiZDIzZmMxZDFkNTQ2ZTE2NDdhMTVkNjIyZjdiNDVmNDU4YmY4NyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjI1NjViMzA2ODUzNzY5MjRmMmQwN2U0MzIyNjY3OWEzNGY4YzQ2MGJmOWIxOTZiYmQxOWNlNjIzNjAwMWViNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGE4ZmIwZTMwODAxZTMzODQ0NzViNGRkYTkzYzMzNWY3ZTE0NTlkZTg0OWQ5NjUxZDA5OGFhYTI3YzRmODc5YyJ9"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/cli.py#L8-L18",
+          "version": "repo-lines-v1:sha256:29925909e4d6f3954b1e007b2c3658a883aeac18acb88d5517156d9f0b1b7e30:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBhYjNhNjVmMzA3NmU0OGEwNDAzYzY5MjNlNGRiMzQ0Yzc2OTg5MWZmYzU3NWQ1MzZmMGU5NmZkYjM2NGJlMjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI4ZDQ4NTVjOGVlZjE5Mzg1OGI3MjU3NDk0YWZiMjBkZWQ5ODJhY2I3MzI4MWI3ZDEyMGY0MzJhMjU3NTQ0MGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZhN2RjNGFmYTU0ZjU3YWVjYTYwYjRiNjMxODFhMTlhZDNjMTI0NzA3OWMyN2I1OTZhZmJjOGZjMDAxZDFjYzUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9886b733c3ad4ea0919d1853b437d461",
+      "statement": "CLI model selection is driven by --model (default openai/gpt-6-luna in src/knowledge_extractor/cli.py) for the primary AI client and vision/OCR/cleanup/formula work, and --translate-model (default mistralai/mistral-large-2512) for translation, which falls back to --model when unset.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/cli.py#L19-L20",
+          "version": "repo-lines-v1:sha256:042d94b4f525206c39d8f782804edc554f05bb39f3435f0f32955c25d2653bc0:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTRmOWQyMmJkOGU0ODQ0NTExZDdhYzU1ZTQ0YjBhNTNmODllNTQxZDRlOGUwNjU5NDA1N2MyNDUyMTg5ZDdhYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTE2MDJlZDE3MTAzNTlkNjcxMjVlYjBkN2E0MjE0YTQ4MzYyMTU1OGNkZjAwNDFkNzE0OGM2NDE2MGQ2ZTEwNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmQxMDU2ZTVjYTZkZjhmZWY2YjBjZjQ1OWFhMDAxYjcxMDNhMjRlZTAwOWY4NDU4MDgxYmI4ODQxMDJlYjUzNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOWVkZDM5ODcwOWYyOWY0NzNjODk4MzdjOTEwNDQ2YTU3NzBkNDE1OTEwNmQ5MTk3MmQxM2NjNzlkOTMwZmJjYyJ9"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/cli.py#L78-L88",
+          "version": "repo-lines-v1:sha256:ba45d7e6466e21d640518300a59ab3f74f7861fad64c798639cd7d47a6c0e90e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJiZDNkYWRhMmM1MDVjYmU5ZWExZDMyYjQ4YjIwNjhiZGUyMjEwZjBhNTdkODE1MTdiNTY1NGVkNzVmNjdmY2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQwNTA3ZTJmOTYzYjliMTE0ODE0OTMyNGJhOWM5ZDE3NzE3ZmMxYWE5ODk4NjU2NzgwYzU0MmMxNjU3M2VhMWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNkYTI0ODA3ZjA2ZDY1MzRlYmRiNzdhYzRlYjMyYjVhODFhMjE1YzdjOTllYWJhYjRlZjAwMDA4ODc3MTdiMzEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFlMzRiZjI3NzAyMzZkOTdkYWRjNDljZjg5MDJmMDQzOTM0N2ZkYjQxM2UwNzY4NTNiN2YxMmZiMTY0ZGEyYzkifQ"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/pipeline.py#L121-L127",
+          "version": "repo-lines-v1:sha256:c4e1fa454e3e5ef3986ee0baa6613bbb490ba0c3aad8f92ee9a41d78d706db69:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTg5YjRiZjBkYTQ2NGY2ZDU0ZTMwZjEyZDQ2ZjYxNGI2MGEyMmU2MmQ0MGZhY2Q2NjViZWZlNTZiNDJjMWUxNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZmM2NmI1MGY4NjY5NzkxOTJiZGQ4NzdhMWU3Mjg2NmRiYTY1ZWJlMjEzZDQwMzU5NWZhZDVkNGJjMWIwMjA0ZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTI4YTc0YWY0MWE0MjlhN2MwNWMxNmI1MjM3MDc1ZjQ3ZTQ0NGQxMDRiZGRkNzE1NWIxNTNiMzRkMTlhODIyMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjY2ZGYzNzJmZjk5ZGFhYzdlMjAxOTcxNmIzOWZkMmRhY2IzY2RhZjhjZTg5YTI5MzNiMDlkNmJlZTNiNjRkNiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_daf00b2c5168491ba29c35a25b3c486f",
+      "statement": "The README documents google/gemini-2.5-flash as a recommended example value, but the CLI code's DEFAULT_MODEL constant is openai/gpt-6-luna, so the authoritative runtime default is openai/gpt-6-luna.",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L23-L25",
+          "version": "repo-lines-v1:sha256:6cf5381c920af6b01c4b78113ddbed01e38f00408e3dda70128c979802f8f127:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYzUwYjhkMWM3MDUyOTU4ODQzMTVjZDc5NjlmNDU2ZWVhNjYwMGI2YjZmMmEwMTE0ZTY2ZDYwNzI2ODBhYWUxNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjBjYzc2OGM3Mzc1OTFjMTcyNTZlMTUxYTZiYWMyZDVlMzc2MWRjNzdkMzQ3YWM3MTRiZGNjNmZhNTY2NzNiOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYTFlNDUwNWMwMTg0ZWQ0NmVkMmRlYjMzYzQwNGU3MjgxNmYzOTFlZmUxNWFiZTcwY2VmNDY3NGIxZmNlOTUzMSJ9"
+        },
+        {
+          "resource": "repo://README.md#L46-L46",
+          "version": "repo-lines-v1:sha256:077bf7f4a08ba3bf927b86fb09f963963e69d776dcf576c98b100ff61438fc6b:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDc3YmY3ZjRhMDhiYTNiZjkyN2I4NmZiMDlmOTYzOTYzZTY5ZDc3NmRjZjU3NmM5OGIxMDBmZjYxNDM4ZmM2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDc3YmY3ZjRhMDhiYTNiZjkyN2I4NmZiMDlmOTYzOTYzZTY5ZDc3NmRjZjU3NmM5OGIxMDBmZjYxNDM4ZmM2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNGIxZDlmNjgyNjE3NGJlMTIzYmVhOTEwMTE4OGM5YmJmZDc0MjNlNjJlMTdjMGExYmYzMDYyNzVhMWMxMjY5NiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZjQxMjk1MzMxNDQwODlhM2JjYzM5OWQzYmFmNWFiYTk3YTQ2Y2ZiODE4NGM0YmU4ZWJjZDU3Yzc2YTdlNGEwMyJ9"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/cli.py#L19-L19",
+          "version": "repo-lines-v1:sha256:a4f9d22bd8e4844511d7ac55e44b0a53f89e541d4e8e06594057c2452189d7ab:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTRmOWQyMmJkOGU0ODQ0NTExZDdhYzU1ZTQ0YjBhNTNmODllNTQxZDRlOGUwNjU5NDA1N2MyNDUyMTg5ZDdhYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTRmOWQyMmJkOGU0ODQ0NTExZDdhYzU1ZTQ0YjBhNTNmODllNTQxZDRlOGUwNjU5NDA1N2MyNDUyMTg5ZDdhYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmQxMDU2ZTVjYTZkZjhmZWY2YjBjZjQ1OWFhMDAxYjcxMDNhMjRlZTAwOWY4NDU4MDgxYmI4ODQxMDJlYjUzNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDUzMGM4MzQ1MDlkNDQxMjBlZDgwMDk5MGNjMTU1MDU5OTI2MWQ1NTRhOGFiNDNjNTE4NjJlM2FhODhlYzcwNSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_bb5dbfecc58949e8809eb559d520387e",
+      "statement": "Translation is an opt-in final pass controlled by --translate-from; the value is sanitized by stripping whitespace and rejecting control characters/newlines, which raises click.BadParameter before processing begins.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/cli.py#L23-L36",
+          "version": "repo-lines-v1:sha256:590d0f7e84813f3b2b73bfd83ff314e391c01b03aaaf37fd86d4c18a17f62308:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBkYzYwNDc4YzNlZjc3MDNhM2Y3ZGQ0NTliODJlMTJlZjg2NzFhYTllMDBhZWVlZTY3ZTYxYTUxOWQ0M2U3MGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMwOTMyYTQzMjhmZWM5MzFkNWU4Yjk3Zjg5MjZkYjIxM2Q3NjM3OGEwZmVjNDQyNTUyMTg2YjJkMjE0MmViZjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ1MzBjODM0NTA5ZDQ0MTIwZWQ4MDA5OTBjYzE1NTA1OTkyNjFkNTU0YThhYjQzYzUxODYyZTNhYTg4ZWM3MDUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRlYzlhM2I3MTllMWM1ZDlhNzhiMDM5ZDc4NDQ2YTU0OTcyZmNkOTRiMzBjYjc0ODU2YjhhMTdlN2RmN2ViNjYifQ"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/cli.py#L93-L100",
+          "version": "repo-lines-v1:sha256:c90220701c4b30a5073b2ec73acb58c19dcb01e2a5633ef2f3765fef2bbe9786:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiM2E3YTIwYmIwZDdkYzc0NDM1YjY4YTg1MDczN2JmYmY1Mzc4NTc4NWQxNjhkMjFmZDliNGIzMTZmZWI3MGRlZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTMzY2ExMzNhM2NhZTFjMTQwNzU1ODJhOWFlODdjOWExYWI4YjQ3ZTczZDZjNjgzMmNlNTE2YmVkMzRmY2ViZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTM3NjU3MWRlOGEyYjkxZTljZDRlZGM4MDMyZmE1ZmNhYTZiZTlkNDIzNGRiMjc1ZTQ0NWE1ZThmZWRhOWU4MiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzE3ODdlYjU0ZTk2N2Q3ZmE4YTQ2MTA1NjU0NGI2NzZiNDhkN2U5NzkyNDFlM2MyMzYxM2YzOTY0YWExNWIyNyJ9"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/pipeline.py#L118-L135",
+          "version": "repo-lines-v1:sha256:4b7e3c30228698ae6c548648cf3698f68d4ddc8aa3d739be64f2da776f345fac:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJjZDYwZDFhMWY5Y2M5MDFkOTBkZjU4OTQ4NzQwYmZjYTczY2Q0YmRhZDUyZDQ4OThkYjcyZGE3OWUzMzA2ZTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRmOGVlMGEwZGNhMjYzZTRjZWM1MDRiYmZiOTc1NjhmYWNlZTIyNDA1YjNjNDIyZWJkZDVjZmVjYzE4NzIyODMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ5NzM5NTE5ZWUxNjgwMGJjMjkwNTdlMmRhMDBhYTU4NmJjNThjYjllMDdhOTQ1MmQ5Mzk5ODNhNGNhNWRmMjEifQ"
+        },
+        {
+          "resource": "repo://tests/test_cli_translate.py#L20-L27",
+          "version": "repo-lines-v1:sha256:e71ba619c8423222fe2dc6129ba6f98be535a53bd5a711a329ffccc341ca1e26:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmU0NzA0NjU5ZDdjNzA4Y2QwYmRiYTUxODBlMzEzYWM3ZjVkYTNjOGU4MjljMzJhODJlNGE1NmU0NDM3MGJhOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiY2UzOWRlZDQyMWMxNzdmNTI4YTMyODUyMGVjZWUwNWE0NTY1ZjI3MGE4OTczODhiZTA2OWE1NTIwM2M5YmM0MyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTJiOWUyM2UxMjI3ZjBlN2UyZmMzOGI5ZDUzYzAzMGEwZWI5MDBkMjg5YzA2MDRjYjNhYTNhOWVmZTc2NzRkNCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_4883df32c819433a92ef1fee21de2158",
+      "statement": "Logging is configured once per run by setup_logging(output_dir) in src/knowledge_extractor/logging_setup.py: the knowledge_extractor logger runs at DEBUG, a console handler at INFO uses a compact %H:%M:%S timestamp format, and a file handler appends to output/extraction.log at DEBUG with the same timestamped format.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/cli.py#L246-L246",
+          "version": "repo-lines-v1:sha256:3d1ea9343c20110038fd7dd97183cf10337b7d4fbcc6dda191b8cf2e5fb83bf0:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiM2QxZWE5MzQzYzIwMTEwMDM4ZmQ3ZGQ5NzE4M2NmMTAzMzdiN2Q0ZmJjYzZkZGExOTFiOGNmMmU1ZmI4M2JmMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2QxZWE5MzQzYzIwMTEwMDM4ZmQ3ZGQ5NzE4M2NmMTAzMzdiN2Q0ZmJjYzZkZGExOTFiOGNmMmU1ZmI4M2JmMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjM2ZjM1YTUyZDc3YmUzZDIwYTYxMzBhODI1ZWUxN2JjZTE2OTUzMmUzZmYwNWMyMDc5Njk1ZTJjYTM1NzA2YSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMmE1MzczNmRkY2Y3MWRjMjdkNWVlMDBhNjQ3MWQ3MmZkZTNjOTE3Njk5YTAyZDExODBkOWM0NTk1ZGFiYWRkOSJ9"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/logging_setup.py#L5-L20",
+          "version": "repo-lines-v1:sha256:8011095b1fe65ba405cee604c5dbafea87bf1286df4b82cfe576789d30c2dbb8:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU0Y2RiNzEzZGYxZTA4YTJkMDlhZDQ3ZWU4ODI2MDU3NmM2NDFhYzU0Yjc4YzBjYmI4ZjQwZWRiZjhlOWMwZmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE5MWJmM2Q5NmYxYjExOTY4OGRlZWE5YTAwNGIyYjNmZWJiMTgwYmI4ZmIyMzQ0NjI1NjE0YWRjODU5NTYzYWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg2OTlkY2YxYjg5ZGFkZTI0MDI0NzI4ZGY3MDI3OGQ2NmZlOWRjZjAxMjViYzUyNjYzNTFjMDhlYjE1M2YxYjIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c530b79892364648946a07232c7aff44",
+      "statement": "The extractor maintains two working directories: --output (default ./output) for final Markdown, the root index.md, and manifest.json; and --temp (default ./temp) for intermediate Markdown and debug artifacts; both are created with mkdir(parents=True, exist_ok=True) at the start of a run.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/cli.py#L243-L244",
+          "version": "repo-lines-v1:sha256:1fda717c2c29dc172ea308ae1fb4d949c83b5f80bd1148c51a648455d733c369:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiN2IyZTA4YzU5ZDU4NTYxYzExNmRmMzExZWY5MGE4YWE3MzI5NjE3YjhmNTg2MzhkZmVmZWE4MTY2OGFkOTlmMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjc2ODYwYzU2ZDdlNjk3MWQwYmNjOTU1YjcyMGRiNGNjOWJiMzc5MDk1Y2QwZTBiMGUyMzk5YzE1NmM2MGNlOSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzlhN2RhZDI0MTM3NzQ2ZDM2MGY1N2EyYTUxYTY2NWQ3OGZmNWQ3MmNlMGI1MjVhOGI4NDc3ZGEzNzExMThiZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjU4ZWE1YjJiZDI2NzJhMTEwOGUwNmYxMjg2ZjZhYjM0MzZjYzQ3YTM3MjljNjY5MDg3ZDgwNzhmYWNiNzk0ZCJ9"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/cli.py#L76-L77",
+          "version": "repo-lines-v1:sha256:924d0c0975699dab39350ba9864cf7eb601afa8000e8c66642145a80e6330d02:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzY5ZWZjMjM5ZmFiOTYwYWQyNzY0ZWFhY2Q0YmVkZjFhMjBjM2Q1ZjY0NDYxNGJmZjNkNDgwZTg2OWJkNDNmYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2JkNTdjZjU0Y2YyYmY1YjFmMDVjOWNlMTE1YWNiMzhmOThlMDgxNTUwOGVlNTllMzJiM2VmMjZiYjFlYmMzYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzk3Y2MzZGYzNDI3YjRjMmU4ZmI2ODI0ODlkYzY5MTE1MzVlMTA1NzQ0MTBlNDMyYjVkMzM4MmRkOGZjNjMyMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZjZkMzdjYzZhZTUwNjYxOWJlYWQyNTIyNTRmNDE5ODk4NzU5YWFlZjNiNDU2NjNlMTgwOThhMjlkMGFiMTA1ZSJ9"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/pipeline.py#L137-L139",
+          "version": "repo-lines-v1:sha256:51623c06f29901bd5306299fbddd86fd395e9c3e00fb0c33b986cdb9e024c179:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDVmOWM5MjU0ZmEyZWQ4OWIwZGM1MjEyNTRiOGNkMzdiZWU1OTdkZDY5ODY0ZDBlMjdlMWNlNmZiOTBhNzBmYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjQyOWIzM2VjMGY4OWU5YTE0NjFmOTJkZmNhNTJhN2NlMmFlNjE2MmU5MzJiZDdmMDJhZTMyM2YwZDdmOWFkOCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZWExYTdkNzRkNjM2ODA0MTNkY2U1OTIxZjQ3YzJlMzkyNGQ3NjhkOTA2MmJhNTI3Mjg1NmRkMGM1YTgyZTljZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDNkNDRjZTdlYzhiZjQ2OTJkMjM4OWU1NjU2OTI2ZGRlMzRmYmQ4OTMyZGYwZGJlMjExNjAyMjEyYmVhNjFhMCJ9"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/pipeline.py#L72-L74",
+          "version": "repo-lines-v1:sha256:b7ba88cdf9d5336461e80885c76ead6dc2b5c5c8fde42e4c4e7f92cfa303e001:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjQ1YTA0NDFmMTk0NmIzMmQ3ZmM2YmFhOWM3MGY3Y2Y3Y2I3YjY3M2E3NzEyYzUxNjI0M2VhZWI5NjA0MzI1NyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjAyZTUxMmQ3N2JmZTk0ZmQ5ZjFkNjU3NmMxZTY2ODQxYWEyMzNiYjFjMjQzNjEyMTRhYTE3ZTE3YzllY2EyZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDQxNGVhN2E0NWI3ZGNjOGQyM2JiNzcxMDFiNjI5NGUyYTIwYmQwMTcyOWMzYjUxZDdkZmM3MGRjNTAyY2Q4NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTdiNGVmYzRkMDNhOWUxZTY1ZmJiNjYxZmYwODRjNmU5M2EzMmRhNDIyZTBmNzk5ZTU0YjdkYTEyZDdmNTRjYiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_94906f1f73134db689558f9d64632cf8",
+      "statement": "The convert command skips a source file if its output Markdown already exists, computing pending files after discovery and logging the pending count plus already-processed count; deleting outputs or running clear is the primary way to force re-processing.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/cli.py#L256-L276",
+          "version": "repo-lines-v1:sha256:bb4314a6d2cd17008e43bad7148d1893086b50184cf7922c675584c670b9f3bc:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM2ZDEzMzViNzBkNmJjMTMwYmJlMjE1MGU2ODc4ZTE4YWQzYzZkOTk1ODY0MzJiYmE1ZWQzNjZlNzcwZDY0MDYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5MDlhNTNhNjE4ZDAyOGUxZDMwMDBjMGE3YWJjZWVjYmU1ZmIzN2Y0ZTUxMWVmZTQ2NjQzZmFkNmU2Njg3MmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE4ZTExMTU4ZjM4NjNmZDJiMDY0YTBkNDliMjlmYjZiYmQ3ZWY0NzNkM2Q5MmM1NDAzOWZjZjhiNTZhZjZhMjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk3NzZmNTkwMTVkZWVhNjgzYzdiNTVjOGM0NzgwYzAwN2VmMzhlODJkNGMxYWExZjIyZDA0ZmU5ZWIzOTU5OWMifQ"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/cli.py#L278-L287",
+          "version": "repo-lines-v1:sha256:ce6ece9c0002c3972eae68a7ea401539519a392f5361e7e0a8a6e0a1e64613a9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMwMmJiMDE3MDBkYmYwZTliNDNkYWEyYWQxNDVmNGI4MjI1Y2RiNDg4YTAyYzE2YWJlZDI5NmNjZWM4NjU2NDciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFiNWM4MjYzMmZjODJkNGIyYzM0MGY0MjU1OGJhM2RmYTMxYzc2NTVkZjZmY2MxNjhiNGZkY2U1N2ZhYzYwNDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQxMGQyZTg2NjNlZDRlZWNmZmY3NGQwZmNhNGQ0OTFmMTQwMDY3ZGJlYWM1YzU1MWQyNGYzZmMwMWE2YzY1NTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE0YTdiNDg2ZmU5NmFmZWQ4Yzc5OGRkYzEwYzMzNjE4OThiZmQ3MDQ0Yjk5YzZlNWIyNDNiMGNiYzZhMTE0NWYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_24f7fc1c938140c083375636fe50b996",
+      "statement": "When --translate-from is set and some files are skipped because their output already exists, a warning is logged because existing outputs are not re-translated.",
+      "evidence": [
+        {
+          "resource": "repo://src/knowledge_extractor/cli.py#L271-L276",
+          "version": "repo-lines-v1:sha256:e4dccc07b49625ee539d10cc68c20602e0eec0d35bfd982e4bde184c37759676:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDM2ZDI0YzA2NmI3ODFmMTAxNjAxMDdkOWZjZjYyOTVkZmIzYzFhMDg2ZGIxMGE0OTg4YTdiODkzYWUxMGExOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTkwOWE1M2E2MThkMDI4ZTFkMzAwMGMwYTdhYmNlZWNiZTVmYjM3ZjRlNTExZWZlNDY2NDNmYWQ2ZTY2ODcyZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDA3MzQ1MTQwOWRiMmIzNzllNzI1YjA3NGM5ODk5NzkwNjY1MGYwYzU3MDhiNWRhN2U4ZjEzYzgwMDA2NzdhMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTc3NmY1OTAxNWRlZWE2ODNjN2I1NWM4YzQ3ODBjMDA3ZWYzOGU4MmQ0YzFhYTFmMjJkMDRmZTllYjM5NTk5YyJ9"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/pipeline.py#L133-L135",
+          "version": "repo-lines-v1:sha256:761d40051cf924d984fd205f4aa3a0b565fc893430110b6d65e371ad71739305:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTk3YjQ3YmI4MWNlOTNjYmE2N2FmYzA4Njk4YTgwY2ZhMDkzYTg2NjdlOWM5Zjk2NTMzNzgxOGQ2NTc4ZDE4NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDQzNDI4NTJiMjJkNmVhNDQzMGExMGFiY2M4Njg0MWEyY2M3ZjNlZWUzZTQ5ZjU5YmU0ZWE2YTFiMzMwMzY5ZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDk3Mzk1MTllZTE2ODAwYmMyOTA1N2UyZGEwMGFhNTg2YmM1OGNiOWUwN2E5NDUyZDkzOTk4M2E0Y2E1ZGYyMSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_e462a686a8ea49dfaff240c29232578f",
+      "statement": "Markdown linting uses pymarkdownlnt for files at or below 512 KB and a fast regex-based fixer for larger files, and the project ships a .pymarkdown.json that disables md013, md024, md025, md033, and md041 while enabling markdown-tables.",
+      "evidence": [
+        {
+          "resource": "repo://.pymarkdown.json",
+          "version": "repo-file-v1:sha256:aefd7363bf413c3683ac6aab65339c283030df923a6f5356b97b9986287a488a"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/linter.py#L1-L50",
+          "version": "repo-lines-v1:sha256:593126fb6bb034326db2454eb24cba3462f1387917afa9d979b886d5d5413190:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU1ZTE4YjRmNzQ1NzYxYWNkNzA4ODQ4ZjE4MzhjOTA1YWE4YjUyN2E2MmIzZWIwYzllNThmNDdkNDM2M2I1NmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZkMjczNDZlOTFlZTQ3YTBjNTAxZmUxNDNhNWNkMjI3NDJjOWRhZjBjMjBkNzE3NWI4MWNlYTNhNGFiMGQ2N2UiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY0NjAxMDk0MmVhYTE4MjU1ZjA0N2Q0YjVjZWJlZmFmNDYyYzgyZGQ3MmU2MmMyMWY4ZjIzMGI0NjhlZTIxOTkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8b7c1fc8a9824925a9dba8bc30128bf6",
+      "statement": "pyproject.toml declares the runtime dependencies (click, openrouter, python-docx, python-pptx, openpyxl, pymupdf, Pillow, python-dotenv, lxml, pymarkdownlnt) and the two scripts knowledge-extractor -> knowledge_extractor.cli:main and convert -> knowledge_extractor.cli:convert_main; python-dotenv is used to load .env at import time.",
+      "evidence": [
+        {
+          "resource": "repo://pyproject.toml#L1-L23",
+          "version": "repo-lines-v1:sha256:141043220b4047791dec2c5d5d2c22bed132e1bf5da77c2e0aecbe5feb591153:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcwMmE4MWMzODM2ZWRlZjJkMGJhMTFkMjM1M2ZiNmRhYmM3NzcxNTBhN2NhODNlYTBkOWU5YTcwMzEzZmVhYmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVkZTg2YzQ3NzYwY2Y4OTQ0ZWExNDEyYTc1YzQ2Mjg4NzA3YWM0ZGMzMTM5MzNkOTg2MWY3Y2U2YTVlYjQxZDcifQ"
+        },
+        {
+          "resource": "repo://src/knowledge_extractor/cli.py#L7-L9",
+          "version": "repo-lines-v1:sha256:030d5e07b201c83972be3292eeaf88a6ae4302feb08a77ac7b6768f426e090c3:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjY1MTc2N2U3Y2M1Mzc5Mzg3YzM3MTM4NDYxY2U5MzY2OWU5ZmRjZjQ1YWY5ZGU1NzBjZjYzNTBhOGViMDQ2NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzA4ZWJlYjgzNWY2ZTQxYTVjMTlhNWJhMDg5NWNiMzU2NDgwNDJlMzMyMTFlNDQ4NWM2MTE3ZDhmOWIwMDc5YyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODlhMmUzNDhjYWQ4MWVhZmJlYjcwMzZmMTY5NzY0Mzk0OWVjMDllZTNiODEyZDIwNWJhZmNhY2Y5MzY1OTg3MiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_3cd29e00029e4dacbc9820c9fc3a4bb8",
+      "statement": "The repository's main.py wrapper inserts src/ onto sys.path and calls main(), providing one supported invocation path alongside uv run knowledge-extractor and uv run convert.",
+      "evidence": [
+        {
+          "resource": "repo://main.py",
+          "version": "repo-file-v1:sha256:f1e330dc9f2781f87ea223729e4180a19a6114ac8ed8eab1e26ecc2bbf49dcc9"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.6.1",
+    "at": "2026-10-03T09:19:39.759Z"
+  }
+}
